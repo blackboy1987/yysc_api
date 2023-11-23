@@ -20,6 +20,11 @@ public class Soft extends BaseEntity<Long> {
     @JsonView({PageView.class})
     private String name;
 
+    /**
+     * 渠道
+     */
+    private String channel;
+
     @Column(unique = true,updatable = false,nullable = false)
     @JsonView({PageView.class})
     private String url;
@@ -47,13 +52,14 @@ public class Soft extends BaseEntity<Long> {
 
     private Long downloadCount;
 
-    @JsonView({PageView.class})
-    @Column(columnDefinition = "longtext")
-    private String description;
+    @OneToOne(mappedBy = "soft", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    private SoftInfo softInfo;
 
-    @JsonView({PageView.class})
-    @Column(length = 2000)
-    private String images;
+    @OneToOne(mappedBy = "soft", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    private SoftExt softExt;
+
+    @OneToMany(mappedBy = "soft",fetch = FetchType.LAZY)
+    private Set<SoftImage> softImages = new HashSet<>();
 
     /**
      * 评分
@@ -103,6 +109,19 @@ public class Soft extends BaseEntity<Long> {
     private Date monthDownloadsDate;
 
     private Integer reviewCount;
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     public String getName() {
         return name;
@@ -174,22 +193,6 @@ public class Soft extends BaseEntity<Long> {
 
     public void setDownloadUrl(String downloadUrl) {
         this.downloadUrl = downloadUrl;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getImages() {
-        return images;
-    }
-
-    public void setImages(String images) {
-        this.images = images;
     }
 
     public Double getScore() {
@@ -270,5 +273,38 @@ public class Soft extends BaseEntity<Long> {
 
     public void setReviewCount(Integer reviewCount) {
         this.reviewCount = reviewCount;
+    }
+
+
+    public String getChannel() {
+        return channel;
+    }
+
+    public void setChannel(String channel) {
+        this.channel = channel;
+    }
+
+    public SoftInfo getSoftInfo() {
+        return softInfo;
+    }
+
+    public void setSoftInfo(SoftInfo softInfo) {
+        this.softInfo = softInfo;
+    }
+
+    public Set<SoftImage> getSoftImages() {
+        return softImages;
+    }
+
+    public void setSoftImages(Set<SoftImage> softImages) {
+        this.softImages = softImages;
+    }
+
+    public SoftExt getSoftExt() {
+        return softExt;
+    }
+
+    public void setSoftExt(SoftExt softExt) {
+        this.softExt = softExt;
     }
 }

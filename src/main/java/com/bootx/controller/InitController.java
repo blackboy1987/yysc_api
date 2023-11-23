@@ -172,10 +172,10 @@ public class InitController {
         img.forEach(i->{
             imgs.add(i.attr("src"));
         });
-        soft.setImages(StringUtils.join(imgs,","));
+       // soft.setImages(StringUtils.join(imgs,","));
         Element txtcont = parse.getElementsByClass("txtcont").first();
         String description = txtcont.html();
-        soft.setDescription(description);
+        //soft.setDescription(description);
     }
 
 
