@@ -25,6 +25,7 @@ dependencies {
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.3'
     implementation group: 'org.jsoup', name: 'jsoup', version: '1.16.2'
 
+    implementation 'com.aliyun.oss:aliyun-sdk-oss:3.17.2'
 
 
     implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.13.0'

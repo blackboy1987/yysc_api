@@ -110,9 +110,7 @@ public class Soft extends BaseEntity<Long> {
 
     private Integer reviewCount;
 
-
-
-
+    private String versionName;
 
 
 
@@ -306,5 +304,13 @@ public class Soft extends BaseEntity<Long> {
 
     public void setSoftExt(SoftExt softExt) {
         this.softExt = softExt;
+    }
+
+    public String getVersionName() {
+        return versionName;
+    }
+
+    public void setVersionName(String versionName) {
+        this.versionName = versionName;
     }
 }

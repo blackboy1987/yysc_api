@@ -1,6 +1,7 @@
 package com.bootx.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.persistence.*;
 
 import java.util.HashSet;
@@ -10,6 +11,7 @@ import java.util.Set;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Category extends OrderedEntity<Long> {
 
+    @JsonView({PageView.class})
     private String name;
 
     @Column(unique = true,updatable = true,nullable = false)

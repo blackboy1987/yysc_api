@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AppVersionController extends BaseController {
 
    @PostMapping("/check")
-    public Result check(){
+    public Result check(String versionCode){
         return Result.success(jdbcTemplate.queryForList("select versionCode,downloadUrl,memo from AppVersion order by createdDate desc limit 1"));
     }
 
