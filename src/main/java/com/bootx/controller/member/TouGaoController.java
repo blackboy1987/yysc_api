@@ -54,28 +54,13 @@ public class TouGaoController extends BaseController {
 		return Result.success(maps);
 	}
 
-	@PostMapping("/quDao")
-	public Result quDao(HttpServletRequest request, @CurrentUser Member member) {
-		List<Map<String, Object>> maps = new ArrayList<>();
-		Map<String,Object> map =new HashMap<>();
-		map.put("key",1);
-		map.put("name","官方版");
-		maps.add(map);
-		Map<String,Object> map1 =new HashMap<>();
-		map1.put("key",2);
-		map1.put("name","国际版");
-		maps.add(map1);
-
-		Map<String,Object> map2 =new HashMap<>();
-		map2.put("key",3);
-		map2.put("name","测试版");
-		maps.add(map2);
-
-		Map<String,Object> map3 =new HashMap<>();
-		map3.put("key",3);
-		map3.put("name","汉化版");
-		maps.add(map3);
-
-		return Result.success(maps);
+	@PostMapping("/init")
+	public Result init(HttpServletRequest request, @CurrentUser Member member) {
+		// 渠道
+		// 广告类型
+		// 付费模式
+		// 运营方式
+		// 应用优点
+		return Result.success();
 	}
 }

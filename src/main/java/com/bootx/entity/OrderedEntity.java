@@ -1,6 +1,7 @@
 
 package com.bootx.entity;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.validation.constraints.Min;
@@ -29,6 +30,7 @@ public abstract class OrderedEntity<ID extends Serializable> extends BaseEntity<
 	 */
 	@Min(0)
 	@Column(name = "orders")
+	@JsonView({PageView.class})
 	private Integer order;
 
 	/**

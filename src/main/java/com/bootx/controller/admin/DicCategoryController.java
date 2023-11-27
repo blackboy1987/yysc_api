@@ -48,7 +48,7 @@ public class DicCategoryController extends BaseController {
 	@PostMapping("/list")
 	@Audit(action = "项目查询")
 	public Result list() {
-		return Result.success(jdbcTemplate.queryForList("select id,name from diccategory order by orders asc"));
+		return Result.success(jdbcTemplate.queryForList("select id `key`,name title from diccategory order by orders asc"));
 	}
 
 	/**

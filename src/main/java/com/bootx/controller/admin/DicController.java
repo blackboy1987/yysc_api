@@ -32,7 +32,8 @@ public class DicController extends BaseController {
 	 * 保存
 	 */
 	@PostMapping("/save")
-	public Result save(Dic dic) {
+	public Result save(Dic dic,Long categoryId) {
+		dic.setDicCategory(dicCategoryService.find(categoryId));
 		dicService.save(dic);
 		return Result.success();
 	}
@@ -41,7 +42,8 @@ public class DicController extends BaseController {
 	 * 更新
 	 */
 	@PostMapping("/update")
-	public Result update(Dic dic) {
+	public Result update(Dic dic,Long categoryId) {
+		dic.setDicCategory(dicCategoryService.find(categoryId));
 		dicService.update(dic);
 		return Result.success();
 	}
@@ -52,8 +54,8 @@ public class DicController extends BaseController {
 	@PostMapping("/list")
 	@Audit(action = "项目查询")
 	@JsonView(BaseEntity.PageView.class)
-	public Result list(Pageable pageable) {
-		return Result.success(dicService.findPage(pageable));
+	public Result list(Pageable pageable,Long categoryId) {
+		return Result.success(dicService.findPage(pageable,dicCategoryService.find(categoryId)));
 	}
 
 	/**
