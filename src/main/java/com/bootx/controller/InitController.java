@@ -38,7 +38,7 @@ public class InitController {
     @Resource
     private ReviewService reviewService;
 
-    /*@GetMapping
+    @GetMapping
     public Result index() throws IOException {
         List<Category> categories = new ArrayList<>();
         String url = "https://m.shouji.com.cn/soft_category.html";
@@ -71,7 +71,7 @@ public class InitController {
         });
 
         return Result.success();
-    }*/
+    }
 
 
     @GetMapping("/soft")
