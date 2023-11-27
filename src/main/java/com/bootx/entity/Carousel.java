@@ -6,7 +6,7 @@ import jakarta.persistence.Entity;
 import java.util.Date;
 
 @Entity
-public class Carousel extends BaseEntity<Long>{
+public class Carousel extends OrderedEntity<Long>{
 
     @JsonView({PageView.class})
     private String image;

@@ -3,8 +3,6 @@ package com.bootx.entity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Digits;
-import org.hibernate.validator.constraints.Length;
 
 import java.util.Date;
 import java.util.HashSet;
@@ -49,8 +47,6 @@ public class Soft extends BaseEntity<Long> {
 
     @JsonView({PageView.class})
     private String downloadUrl;
-
-    private Long downloadCount;
 
     @OneToOne(mappedBy = "soft", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private SoftInfo softInfo;
@@ -199,14 +195,6 @@ public class Soft extends BaseEntity<Long> {
 
     public void setScore(Double score) {
         this.score = score;
-    }
-
-    public Long getDownloadCount() {
-        return downloadCount;
-    }
-
-    public void setDownloadCount(Long downloadCount) {
-        this.downloadCount = downloadCount;
     }
 
     public Long getTodayDownloads() {

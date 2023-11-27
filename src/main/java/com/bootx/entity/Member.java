@@ -63,7 +63,7 @@ public class Member extends User {
     @NotNull
     @Min(0)
     @Column(nullable = false)
-    private Long signInDays;
+    private Integer signInDays;
 
 
     /**
@@ -72,7 +72,7 @@ public class Member extends User {
     @NotNull
     @Min(0)
     @Column(nullable = false)
-    private Long continuousSignInDays;
+    private Integer continuousSignInDays;
 
     /**
      * 最近一次签到的时间
@@ -147,19 +147,19 @@ public class Member extends User {
         this.point = point;
     }
 
-    public Long getSignInDays() {
+    public Integer getSignInDays() {
         return signInDays;
     }
 
-    public void setSignInDays(Long signInDays) {
+    public void setSignInDays(Integer signInDays) {
         this.signInDays = signInDays;
     }
 
-    public Long getContinuousSignInDays() {
+    public Integer getContinuousSignInDays() {
         return continuousSignInDays;
     }
 
-    public void setContinuousSignInDays(Long continuousSignInDays) {
+    public void setContinuousSignInDays(Integer continuousSignInDays) {
         this.continuousSignInDays = continuousSignInDays;
     }
 

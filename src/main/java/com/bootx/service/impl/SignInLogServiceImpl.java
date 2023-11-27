@@ -7,6 +7,9 @@ import com.bootx.util.IPUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Service;
 
+/**
+ * @author black
+ */
 @Service
 public class SignInLogServiceImpl extends BaseServiceImpl<SignInLog,Long> implements SignInLogService {
     @Override

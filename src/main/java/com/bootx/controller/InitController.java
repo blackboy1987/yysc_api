@@ -109,7 +109,6 @@ public class InitController {
                         soft.getCategories().add(category);
                         soft.setLogo(src);
                         soft.setDownloads(random.nextLong(1000000));
-                        soft.setDownloadCount(random.nextLong(1000000));
                         soft.setTodayDownloads(random.nextLong(1000000));
                         soft.setWeekDownloads(random.nextLong(1000000));
                         soft.setMonthDownloads(random.nextLong(1000000));
@@ -188,8 +187,8 @@ public class InitController {
             member.setIsEnabled(true);
             member.setIsLocked(false);
             member.setPoint(0L);
-            member.setContinuousSignInDays(0L);
-            member.setSignInDays(0L);
+            member.setContinuousSignInDays(0);
+            member.setSignInDays(0);
             memberService.save(member);
         }
         return Result.success();

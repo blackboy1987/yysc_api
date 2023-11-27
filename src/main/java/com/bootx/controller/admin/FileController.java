@@ -20,8 +20,8 @@ public class FileController extends BaseController{
 
     @PostMapping("/upload")
     public Result upload(MultipartFile file, @CurrentUser Admin admin) throws Exception {
-        String fileName = UUID.randomUUID().toString().replace("-","")+ FilenameUtils.getExtension(file.getName());
-        File tmp = new File(SystemUtils.getJavaIoTmpDir(), UUID.randomUUID().toString().replace("-","")+"_"+file.getName());
+        String fileName = UUID.randomUUID().toString().replace("-","")+"."+ FilenameUtils.getExtension(file.getOriginalFilename());
+        File tmp = new File(SystemUtils.getJavaIoTmpDir(), UUID.randomUUID().toString().replace("-","")+"_"+file.getOriginalFilename());
         file.transferTo(tmp);
 
         return Result.success(UploadUtils.upload(fileName,tmp));

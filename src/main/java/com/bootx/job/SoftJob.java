@@ -39,7 +39,7 @@ public class SoftJob {
 
     Random random = new Random();
 
-    @Scheduled(fixedRate = 1000*60*30)
+    // @Scheduled(fixedRate = 1000*60*30)
     public void run(){
         List<Category> categories = categoryService.findAll();
         for (Category category : categories) {
@@ -77,7 +77,6 @@ public class SoftJob {
                         soft.getCategories().add(category);
                         soft.setLogo(src);
                         soft.setDownloads(random.nextLong(1000000));
-                        soft.setDownloadCount(random.nextLong(1000000));
                         soft.setTodayDownloads(random.nextLong(1000000));
                         soft.setWeekDownloads(random.nextLong(1000000));
                         soft.setMonthDownloads(random.nextLong(1000000));

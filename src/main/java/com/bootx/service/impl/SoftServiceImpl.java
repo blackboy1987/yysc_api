@@ -16,4 +16,12 @@ public class SoftServiceImpl extends BaseServiceImpl<Soft, Long> implements Soft
     public Soft findByUrl(String href) {
         return softDao.find("url",href);
     }
+
+    @Override
+    public void updateDownloads(Long id,int i) {
+        Soft soft = find(id);
+        if(soft!=null){
+            soft.setDownloads(soft.getDownloads()+i);
+        }
+    }
 }

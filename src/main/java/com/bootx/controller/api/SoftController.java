@@ -5,9 +5,6 @@ import com.bootx.common.Pageable;
 import com.bootx.common.Result;
 import com.bootx.controller.admin.BaseController;
 import com.bootx.entity.BaseEntity;
-import com.bootx.entity.Member;
-import com.bootx.security.CurrentUser;
-import com.bootx.service.MemberService;
 import com.bootx.service.SoftService;
 import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.annotation.Resource;
@@ -17,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -63,7 +59,7 @@ public class SoftController extends BaseController {
 		List<Map<String, Object>> maps;
 		String pageQuery = "limit "+(pageable.getPageNumber()-1)*pageable.getPageSize()+","+ pageable.getPageSize();
 		if(StringUtils.equalsIgnoreCase("00",orderBy)){
-			maps = jdbcTemplate.queryForList("select id,downloadCount downloads,logo,name "+fromSql+" order by downloadCount desc "+pageQuery);
+			maps = jdbcTemplate.queryForList("select size, score,versionName, id, downloads,logo,name "+fromSql+" order by downloadCount desc "+pageQuery);
 			maps.forEach(item->{
 				Long downloads = Long.valueOf(item.get("downloads") + "");
 				if(downloads>=10000){
@@ -71,38 +67,40 @@ public class SoftController extends BaseController {
 				}else{
 					item.put("memo",downloads+"次下载");
 				}
+				item.put("score",(item.get("score")+"").substring(0,3));
 			});
 		}else if(StringUtils.equalsIgnoreCase("01",orderBy)){
-			maps = jdbcTemplate.queryForList("select id,reviewCount,score,logo,name "+fromSql+" order by score desc "+pageQuery);
+			maps = jdbcTemplate.queryForList("select id,reviewCount,score,logo,name,versionName,size "+fromSql+" order by score desc "+pageQuery);
 			maps.forEach(item->{
-				item.put("memo","今日"+item.get("reviewCount")+"条评论");
+				item.put("memo","今日"+(item.get("reviewCount")==null?0:item.get("reviewCount"))+"条评论");
+				item.put("score",(item.get("score")+"").substring(0,3));
 			});
 		}else if(StringUtils.equalsIgnoreCase("2",orderBy)){
-			maps = jdbcTemplate.queryForList("SELECT id,downloads,logo,name,score FROM soft WHERE id >= ((SELECT MAX(id) FROM soft)-(SELECT MIN(id) FROM soft)) * RAND() + (SELECT MIN(id) FROM soft) LIMIT 20");
+			maps = jdbcTemplate.queryForList("SELECT size, id,downloads,logo,name,score FROM soft WHERE id >= ((SELECT MAX(id) FROM soft)-(SELECT MIN(id) FROM soft)) * RAND() + (SELECT MIN(id) FROM soft) LIMIT 20");
 			maps.forEach(item->{
 				Long downloads = Long.valueOf(item.get("downloads") + "");
 				if(downloads>=10000){
 					item.put("memo",String.format("%.2f",downloads/10000.0)+"万次下载");
 				}else{
-
 					item.put("memo",downloads+"次下载");
 				}
+				item.put("score",(item.get("score")+"").substring(0,3));
 			});
 		}else if(StringUtils.equalsIgnoreCase("7",orderBy)){
-			maps = jdbcTemplate.queryForList("select id, downloads,logo,name "+fromSql+" order by downloadCount desc "+pageQuery);
+			maps = jdbcTemplate.queryForList("select size, id, downloads,logo,name,score,versionName "+fromSql+" order by downloadCount desc "+pageQuery);
 			maps.forEach(item->{
 				Long downloads = Long.valueOf(item.get("downloads") + "");
 				if(downloads>=10000){
 					item.put("memo",String.format("%.2f",downloads/10000.0)+"万次下载");
 				}else{
-
 					item.put("memo",downloads+"次下载");
 				}
+				item.put("score",(item.get("score")+"").substring(0,3));
 			});
 		}else if(StringUtils.equalsIgnoreCase("8",orderBy)){
-			maps = jdbcTemplate.queryForList("select id,logo,name "+fromSql+" order by downloadCount desc "+pageQuery);
+			maps = jdbcTemplate.queryForList("select size, id,logo,name "+fromSql+" order by downloadCount desc "+pageQuery);
 		}else{
-			maps = jdbcTemplate.queryForList("select id,downloadCount downloads,logo,name,score "+fromSql+" order by downloadCount desc "+pageQuery);
+			maps = jdbcTemplate.queryForList("select size, id,downloadCount downloads,logo,name,score "+fromSql+" order by downloadCount desc "+pageQuery);
 			maps.forEach(item->{
 				Long downloads = Long.valueOf(item.get("downloads") + "");
 				if(downloads>=10000){
@@ -110,12 +108,47 @@ public class SoftController extends BaseController {
 				}else{
 					item.put("memo",downloads+"次下载");
 				}
+				item.put("score",(item.get("score")+"").substring(0,3));
 			});
 		}
-
-
-
 		return Result.success(maps);
 	}
 
+	@PostMapping("/detail")
+	public Result detail(Long id) {
+		Map<String, Object> data = jdbcTemplate.queryForMap("select fullName, score,size,downloadCount downloads,name,logo,updateDate from soft where id=?", id);
+		data.putAll(jdbcTemplate.queryForMap("select introduce,memo,updatedContent from softinfo where soft_id=?",id));
+		List<Map<String, Object>> images = jdbcTemplate.queryForList("select url from softimage where soft_id=? and status=1;", id);
+		data.put("score",(data.get("score")+"").substring(0,3));
+
+		Long downloads = Long.valueOf(data.get("downloads") + "");
+		if(downloads>=10000){
+			data.put("downloads",String.format("%.2f",downloads/10000.0)+"万");
+		}else{
+			data.put("downloads",downloads+"次下载");
+		}
+
+		List<String> imageList = new ArrayList<>();
+		images.forEach(item->{
+			imageList.add(item.get("url")+"");
+		});
+		data.put("images",imageList);
+		return Result.success(data);
+	}
+
+
+	@PostMapping("/download")
+	public Result download(Long id) {
+		try {
+			Map<String,Object> downloadInfo = jdbcTemplate.queryForMap("select downloadUrl,name,versionName,size from soft where id=?", id);
+			if(StringUtils.startsWith(downloadInfo.get("downloadUrl")+"","http")&&StringUtils.endsWith(downloadInfo.get("downloadUrl")+"",".apk")){
+				// 下载次数加1
+				softService.updateDownloads(id,1);
+				return Result.success(downloadInfo);
+			}
+		}catch (Exception ignored){
+
+		}
+		return Result.error("暂无下载地址");
+	}
 }

@@ -43,6 +43,7 @@ public class UploadUtils {
             if (ossClient != null) {
                 ossClient.shutdown();
             }
+            FileUtils.delete(file);
         }
         return urlPrefix+path;
     }

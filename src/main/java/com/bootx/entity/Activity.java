@@ -9,7 +9,7 @@ import java.util.Date;
  * @author black
  */
 @Entity
-public class Activity extends BaseEntity<Long>{
+public class Activity extends OrderedEntity<Long>{
 
     @JsonView({PageView.class})
     private String image;
