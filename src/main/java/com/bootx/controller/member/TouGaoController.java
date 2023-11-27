@@ -47,7 +47,7 @@ public class TouGaoController extends BaseController {
 		List<Map<String, Object>> maps = jdbcTemplate.queryForList("select parent.id,parent.name,(select count(child.id) from category child where parent_id=parent.id) childrenCount from category parent where parent.parent_id is null order by orders asc ;");
 		maps.forEach(item->{
 			if(!StringUtils.equalsIgnoreCase(item.get("childrenCount")+"","0")){
-				item.put("children",jdbcTemplate.queryForList("select id,name from category where parent_id=? order by orders asc "));
+				item.put("children",jdbcTemplate.queryForList("select id,name from category where parent_id=? order by orders asc ",item.get("id")));
 			}
 			item.remove("childrenCount");
 		});
