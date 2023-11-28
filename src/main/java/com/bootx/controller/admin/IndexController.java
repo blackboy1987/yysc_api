@@ -55,7 +55,7 @@ public class IndexController extends BaseController {
 
 
 	@PostMapping("/homeCenterBarSave")
-	public Result homeCenterBar(HttpServletRequest request,String str) {
+	public Result homeCenterBarSave(HttpServletRequest request,String str) {
 		Long id = 0L;
 		try {
 			id = jdbcTemplate.queryForObject("select id from setting order by createdDate desc limit 1", Long.class);
@@ -73,5 +73,39 @@ public class IndexController extends BaseController {
 			settingService.update(setting);
 		}
 		return homeCenterBar(request);
+	}
+
+
+	@PostMapping("/homeBottomBar")
+	public Result homeBottomBar(HttpServletRequest request) {
+		try {
+			String s = jdbcTemplate.queryForObject("select homeBottomBar from setting order by createdDate desc limit 1", String.class);
+			return Result.success(JsonUtils.toObject(s, new TypeReference<List<Map<String,Object>>>() {
+			}));
+		}catch (Exception e){
+			return Result.success(Collections.emptyList());
+		}
+	}
+
+
+	@PostMapping("/homeBottomBarSave")
+	public Result homeBottomBarSave(HttpServletRequest request,String str) {
+		Long id = 0L;
+		try {
+			id = jdbcTemplate.queryForObject("select id from setting order by createdDate desc limit 1", Long.class);
+
+		}catch (Exception ignored){
+
+		}
+		Setting setting = settingService.find(id);
+		if(setting==null){
+			setting = new Setting();
+			setting.setHomeBottomBar(str);
+			settingService.save(setting);
+		}else{
+			setting.setHomeBottomBar(str);
+			settingService.update(setting);
+		}
+		return homeBottomBar(request);
 	}
 }

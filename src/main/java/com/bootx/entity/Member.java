@@ -1,5 +1,6 @@
 package com.bootx.entity;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Transient;
@@ -32,6 +33,7 @@ public class Member extends User {
     @Length(min = 4, max = 20)
     @Pattern.List({ @Pattern(regexp = "^[0-9a-zA-Z_\\u4e00-\\u9fa5]+$"), @Pattern(regexp = "^.*[^\\d].*$") })
     @Column(nullable = false, updatable = false,unique = true)
+    @JsonView({PageView.class})
     private String username;
 
     /**
@@ -54,6 +56,7 @@ public class Member extends User {
     @NotNull
     @Min(0)
     @Column(nullable = false)
+    @JsonView({PageView.class})
     private Long point;
 
 
@@ -63,6 +66,7 @@ public class Member extends User {
     @NotNull
     @Min(0)
     @Column(nullable = false)
+    @JsonView({PageView.class})
     private Integer signInDays;
 
 
@@ -72,11 +76,13 @@ public class Member extends User {
     @NotNull
     @Min(0)
     @Column(nullable = false)
+    @JsonView({PageView.class})
     private Integer continuousSignInDays;
 
     /**
      * 最近一次签到的时间
      */
+    @JsonView({PageView.class})
     private Date signInDate;
 
     /**
