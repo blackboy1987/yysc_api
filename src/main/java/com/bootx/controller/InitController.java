@@ -10,7 +10,6 @@ import com.bootx.service.MemberService;
 import com.bootx.service.ReviewService;
 import com.bootx.service.SoftService;
 import jakarta.annotation.Resource;
-import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -81,7 +80,7 @@ public class InitController {
 
         Random random = new Random();
         for (Category category : categories) {
-            if(category.getId()<90){
+            if(category.getId()<60){
                 continue;
             }
             String url = "https://m.shouji.com.cn"+category.getUrl();
@@ -117,26 +116,20 @@ public class InitController {
                         soft.setMonthDownloadsDate(new Date());
                         soft.setScore(new Random().nextDouble(10));
 
-
-
-
-                        try {
-                            softDetail(soft);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
                         Soft finalSoft = soft;
                         new Thread(()->{
-                            if(finalSoft.isNew()){
-                                softService.save(finalSoft);
-                            }else{
-                                softService.update(finalSoft);
+                            try {
+                                softDetail(finalSoft);
+                                if(finalSoft.isNew()){
+                                    softService.save(finalSoft);
+                                }else{
+                                    softService.update(finalSoft);
+                                }
+                            }catch (Exception ignored){
+
                             }
                         }).start();
                     });
-
-
-
                     if(li.size()<20){
                         break;
                     }
