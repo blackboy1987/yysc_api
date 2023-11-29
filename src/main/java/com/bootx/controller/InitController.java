@@ -76,16 +76,11 @@ public class InitController {
 
     @GetMapping("/soft")
     public Result soft() throws IOException {
-
         List<Category> categories = categoryService.findAll();
-
         Random random = new Random();
         for (Category category : categories) {
-            if(category.getId()<90){
-                continue;
-            }
             String url = "https://m.shouji.com.cn"+category.getUrl();
-            for (int i = 7; i <= 8; i++) {
+            for (int i = 1; i <= 1000; i++) {
                 String url1 = url.replace("_1", "_"+i);
                 try {
                     Document parse = Jsoup.parse(new URL(url1).openStream(), "utf-8", url);
