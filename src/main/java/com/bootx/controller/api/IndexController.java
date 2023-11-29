@@ -65,7 +65,7 @@ public class IndexController extends BaseController {
 	 */
 	@PostMapping("/list3")
 	public Result list3(){
-		return Result.success(jdbcTemplate.queryForList("select id,downloads,logo from soft order by downloadCount desc limit 50;"));
+		return Result.success(jdbcTemplate.queryForList("select id,downloads,logo from soft order by downloads desc limit 50;"));
 	}
 
 	@PostMapping("/homeCenterBar")
