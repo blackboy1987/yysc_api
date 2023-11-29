@@ -59,7 +59,7 @@ public class SoftController extends BaseController {
 		List<Map<String, Object>> maps;
 		String pageQuery = "limit "+(pageable.getPageNumber()-1)*pageable.getPageSize()+","+ pageable.getPageSize();
 		if(StringUtils.equalsIgnoreCase("00",orderBy)){
-			maps = jdbcTemplate.queryForList("select size, score,versionName, id, downloads,logo,name "+fromSql+" order by downloadCount desc "+pageQuery);
+			maps = jdbcTemplate.queryForList("select size, score,versionName, id, downloads,logo,name "+fromSql+" order by downloads desc "+pageQuery);
 			maps.forEach(item->{
 				Long downloads = Long.valueOf(item.get("downloads") + "");
 				if(downloads>=10000){
@@ -98,9 +98,9 @@ public class SoftController extends BaseController {
 				item.put("score",(item.get("score")+"").substring(0,3));
 			});
 		}else if(StringUtils.equalsIgnoreCase("8",orderBy)){
-			maps = jdbcTemplate.queryForList("select size, id,logo,name "+fromSql+" order by downloadCount desc "+pageQuery);
+			maps = jdbcTemplate.queryForList("select size, id,logo,name "+fromSql+" order by downloads desc "+pageQuery);
 		}else{
-			maps = jdbcTemplate.queryForList("select size, id,downloadCount downloads,logo,name,score "+fromSql+" order by downloadCount desc "+pageQuery);
+			maps = jdbcTemplate.queryForList("select size, id,downloads ,logo,name,score "+fromSql+" order by downloads desc "+pageQuery);
 			maps.forEach(item->{
 				Long downloads = Long.valueOf(item.get("downloads") + "");
 				if(downloads>=10000){
@@ -116,7 +116,7 @@ public class SoftController extends BaseController {
 
 	@PostMapping("/detail")
 	public Result detail(Long id) {
-		Map<String, Object> data = jdbcTemplate.queryForMap("select fullName, score,size,downloadCount downloads,name,logo,updateDate from soft where id=?", id);
+		Map<String, Object> data = jdbcTemplate.queryForMap("select fullName, score,size,downloads,name,logo,updateDate from soft where id=?", id);
 		data.putAll(jdbcTemplate.queryForMap("select introduce,memo,updatedContent from softinfo where soft_id=?",id));
 		List<Map<String, Object>> images = jdbcTemplate.queryForList("select url from softimage where soft_id=? and status=1;", id);
 		data.put("score",(data.get("score")+"").substring(0,3));
