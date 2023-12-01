@@ -122,7 +122,13 @@ public class SoftController extends BaseController {
 	@PostMapping("/detail")
 	public Result detail(Long id) {
 		Map<String, Object> data = jdbcTemplate.queryForMap("select fullName, score,size,downloads,name,logo,updateDate from soft where id=?", id);
-		data.putAll(jdbcTemplate.queryForMap("select introduce,memo,updatedContent from softinfo where soft_id=?",id));
+		try {
+			data.putAll(jdbcTemplate.queryForMap("select introduce,memo,updatedContent from softinfo where soft_id=?",id));
+		}catch (Exception e){
+			data.put("introduce","");
+			data.put("memo","");
+			data.put("updatedContent","");
+		}
 		List<Map<String, Object>> images = jdbcTemplate.queryForList("select url from softimage where soft_id=? and status=1;", id);
 		data.put("score",(data.get("score")+"").substring(0,3));
 
