@@ -143,12 +143,14 @@ public class SoftController extends BaseController {
 
 
 	@PostMapping("/download")
+	@Audit(action = "软件下载")
 	public Result download(Long id) {
 		try {
 			Map<String,Object> downloadInfo = jdbcTemplate.queryForMap("select downloadUrl,name,versionName,size from soft where id=?", id);
 			if(StringUtils.startsWith(downloadInfo.get("downloadUrl")+"","http")&&StringUtils.endsWith(downloadInfo.get("downloadUrl")+"",".apk")){
 				// 下载次数加1
 				softService.updateDownloads(id,1);
+                downloadInfo.putIfAbsent("versionName", "1.0.0");
 				return Result.success(downloadInfo);
 			}
 		}catch (Exception ignored){
