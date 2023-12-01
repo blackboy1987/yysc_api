@@ -1,6 +1,7 @@
 
 package com.bootx.controller.api;
 
+import com.bootx.audit.Audit;
 import com.bootx.common.Pageable;
 import com.bootx.common.Result;
 import com.bootx.controller.admin.BaseController;
@@ -53,6 +54,7 @@ public class SoftController extends BaseController {
 	 * @return
 	 */
 	@PostMapping("/orderBy")
+	@Audit(action = "软件列表")
 	public Result orderBy(Pageable pageable, String orderBy, Long categoryId, @CurrentUser Member member){
 		System.out.println(member);
 		String fromSql = "from soft";
