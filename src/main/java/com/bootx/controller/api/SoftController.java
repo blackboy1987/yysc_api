@@ -54,6 +54,7 @@ public class SoftController extends BaseController {
 	 */
 	@PostMapping("/orderBy")
 	public Result orderBy(Pageable pageable, String orderBy, Long categoryId, @CurrentUser Member member){
+		System.out.println(member);
 		String fromSql = "from soft";
 		if(categoryId!=null&&categoryId!=0){
 			fromSql = "from soft_categories,soft where softs_id=soft.id and categories_id="+categoryId;

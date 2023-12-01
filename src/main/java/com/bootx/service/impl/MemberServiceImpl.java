@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
+import java.util.Enumeration;
 
 /**
  * @author black
@@ -41,7 +42,7 @@ public class MemberServiceImpl extends BaseServiceImpl<Member, Long> implements 
 		try {
 			HttpServletRequest request = WebUtils.getRequest();
             assert request != null;
-            String token = request.getHeader("token");
+			String token = request.getHeader("token");
 			Claims claims = JWTUtils.parseToken(token);
             assert claims != null;
             String id = claims.getId();
