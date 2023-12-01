@@ -39,7 +39,7 @@ public class SoftIconLogController extends BaseController {
 		if(member.getPoint()<0){
 			return Result.error("您没有足够的硬币哦！");
 		}
-		pointLogService.create(member,)
+		pointLogService.create(member,softIconLog.getPoint()*-1,"投币",2);
 
 
 
