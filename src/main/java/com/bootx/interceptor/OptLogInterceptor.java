@@ -5,6 +5,7 @@ import com.bootx.audit.Audit;
 import com.bootx.entity.OptLog;
 import com.bootx.service.AdminService;
 import com.bootx.service.OptLogService;
+import com.bootx.util.IPUtils;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -42,8 +43,8 @@ public class OptLogInterceptor implements HandlerInterceptor {
 			if (audit != null) {
 				OptLog auditLog = new OptLog();
 				auditLog.setAction(audit.action());
-				auditLog.setIp(request.getRemoteAddr());
-				auditLog.setRequestUrl(String.valueOf(request.getRequestURL()));
+				auditLog.setIp(IPUtils.getIpAddr(request));
+				auditLog.setRequestUrl(request.getRequestURI());
 				auditLog.setParameters(new HashMap<>(request.getParameterMap()));
 				auditLog.setUser(adminService.getCurrent());
 				request.setAttribute(OptLog.OPT_LOG_ATTRIBUTE_NAME, auditLog);

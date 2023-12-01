@@ -6,6 +6,7 @@ import com.bootx.entity.MemberOptLog;
 import com.bootx.entity.OptLog;
 import com.bootx.service.MemberOptLogService;
 import com.bootx.service.MemberService;
+import com.bootx.util.IPUtils;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -17,6 +18,9 @@ import org.springframework.web.servlet.ModelAndView;
 import java.util.HashMap;
 
 
+/**
+ * @author black
+ */
 public class MemberOptLogInterceptor implements HandlerInterceptor {
 
 	@Resource
@@ -37,17 +41,16 @@ public class MemberOptLogInterceptor implements HandlerInterceptor {
 	 */
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
-		if (handler instanceof HandlerMethod) {
-			HandlerMethod handlerMethod = (HandlerMethod) handler;
+		if (handler instanceof HandlerMethod handlerMethod) {
 			Audit audit = AnnotationUtils.findAnnotation(handlerMethod.getMethod(), Audit.class);
 			if (audit != null) {
 				MemberOptLog auditLog = new MemberOptLog();
 				auditLog.setAction(audit.action());
-				auditLog.setIp(request.getRemoteAddr());
-				auditLog.setRequestUrl(String.valueOf(request.getRequestURL()));
+				auditLog.setIp(IPUtils.getIpAddr(request));
+				auditLog.setRequestUrl(request.getRequestURI());
 				auditLog.setParameters(new HashMap<>(request.getParameterMap()));
 				auditLog.setUser(memberService.getCurrent());
-				request.setAttribute(OptLog.OPT_LOG_ATTRIBUTE_NAME, auditLog);
+				request.setAttribute(MemberOptLog.OPT_LOG_ATTRIBUTE_NAME, auditLog);
 			}
 		}
 		return true;
@@ -67,8 +70,7 @@ public class MemberOptLogInterceptor implements HandlerInterceptor {
 	 */
 	@Override
 	public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
-		if (handler instanceof HandlerMethod) {
-			HandlerMethod handlerMethod = (HandlerMethod) handler;
+		if (handler instanceof HandlerMethod handlerMethod) {
 			Audit audit = AnnotationUtils.findAnnotation(handlerMethod.getMethod(), Audit.class);
 			if (audit != null) {
 				MemberOptLog auditLog = (MemberOptLog) request.getAttribute(MemberOptLog.OPT_LOG_ATTRIBUTE_NAME);
