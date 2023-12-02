@@ -56,7 +56,6 @@ public class SoftController extends BaseController {
 	@PostMapping("/orderBy")
 	@Audit(action = "软件列表")
 	public Result orderBy(Pageable pageable, String orderBy, Long categoryId, @CurrentUser Member member){
-		System.out.println(member);
 		String fromSql = "from soft";
 		if(categoryId!=null&&categoryId!=0){
 			fromSql = "from soft_categories,soft where softs_id=soft.id and categories_id="+categoryId;
@@ -82,6 +81,17 @@ public class SoftController extends BaseController {
 			});
 		}else if(StringUtils.equalsIgnoreCase("2",orderBy)){
 			maps = jdbcTemplate.queryForList("SELECT size, id,downloads,logo,name,score FROM soft WHERE id >= ((SELECT MAX(id) FROM soft)-(SELECT MIN(id) FROM soft)) * RAND() + (SELECT MIN(id) FROM soft) LIMIT 20");
+			maps.forEach(item->{
+				Long downloads = Long.valueOf(item.get("downloads") + "");
+				if(downloads>=10000){
+					item.put("memo",String.format("%.2f",downloads/10000.0)+"万次下载");
+				}else{
+					item.put("memo",downloads+"次下载");
+				}
+				item.put("score",(item.get("score")+"").substring(0,3));
+			});
+		}else if(StringUtils.equalsIgnoreCase("3",orderBy)){
+			maps = jdbcTemplate.queryForList("select size, id, downloads,logo,name,score,versionName,updateDate "+fromSql+" order by updateDate desc "+pageQuery);
 			maps.forEach(item->{
 				Long downloads = Long.valueOf(item.get("downloads") + "");
 				if(downloads>=10000){

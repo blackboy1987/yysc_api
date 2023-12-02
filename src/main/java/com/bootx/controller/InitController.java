@@ -186,8 +186,8 @@ public class InitController {
     }
 
     @GetMapping("/detail1")
-    public Result detail() throws IOException {
-        for (Long j = 1L; j < 100000L; j++) {
+    public Result detail(Long start) {
+        for (Long j = start; j < 100000L; j++) {
             Soft soft = softService.find(j);
             if(soft==null){
                 continue;
