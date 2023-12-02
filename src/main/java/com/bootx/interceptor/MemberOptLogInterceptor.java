@@ -2,9 +2,10 @@
 package com.bootx.interceptor;
 
 import com.bootx.audit.Audit;
+import com.bootx.entity.MemberOptLog;
 import com.bootx.entity.OptLog;
-import com.bootx.service.AdminService;
-import com.bootx.service.OptLogService;
+import com.bootx.service.MemberOptLogService;
+import com.bootx.service.MemberService;
 import com.bootx.util.IPUtils;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
@@ -17,12 +18,15 @@ import org.springframework.web.servlet.ModelAndView;
 import java.util.HashMap;
 
 
-public class OptLogInterceptor implements HandlerInterceptor {
+/**
+ * @author black
+ */
+public class MemberOptLogInterceptor implements HandlerInterceptor {
 
 	@Resource
-	private OptLogService optLogService;
+	private MemberOptLogService memberOptLogService;
 	@Resource
-	private AdminService adminService;
+	private MemberService memberService;
 
 	/**
 	 * 请求前处理
@@ -37,17 +41,16 @@ public class OptLogInterceptor implements HandlerInterceptor {
 	 */
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
-		if (handler instanceof HandlerMethod) {
-			HandlerMethod handlerMethod = (HandlerMethod) handler;
+		if (handler instanceof HandlerMethod handlerMethod) {
 			Audit audit = AnnotationUtils.findAnnotation(handlerMethod.getMethod(), Audit.class);
 			if (audit != null) {
-				OptLog auditLog = new OptLog();
+				MemberOptLog auditLog = new MemberOptLog();
 				auditLog.setAction(audit.action());
 				auditLog.setIp(IPUtils.getIpAddr(request));
 				auditLog.setRequestUrl(request.getRequestURI());
 				auditLog.setParameters(new HashMap<>(request.getParameterMap()));
-				auditLog.setUser(adminService.getCurrent());
-				request.setAttribute(OptLog.OPT_LOG_ATTRIBUTE_NAME, auditLog);
+				auditLog.setUser(memberService.getCurrent());
+				request.setAttribute(MemberOptLog.OPT_LOG_ATTRIBUTE_NAME, auditLog);
 			}
 		}
 		return true;
@@ -67,13 +70,12 @@ public class OptLogInterceptor implements HandlerInterceptor {
 	 */
 	@Override
 	public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
-		if (handler instanceof HandlerMethod) {
-			HandlerMethod handlerMethod = (HandlerMethod) handler;
+		if (handler instanceof HandlerMethod handlerMethod) {
 			Audit audit = AnnotationUtils.findAnnotation(handlerMethod.getMethod(), Audit.class);
 			if (audit != null) {
-				OptLog auditLog = (OptLog) request.getAttribute(OptLog.OPT_LOG_ATTRIBUTE_NAME);
+				MemberOptLog auditLog = (MemberOptLog) request.getAttribute(MemberOptLog.OPT_LOG_ATTRIBUTE_NAME);
 				if (auditLog != null && auditLog.isNew()) {
-					optLogService.create(auditLog);
+					memberOptLogService.create(auditLog);
 				}
 			}
 		}

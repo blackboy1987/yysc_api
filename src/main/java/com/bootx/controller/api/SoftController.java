@@ -1,6 +1,7 @@
 
 package com.bootx.controller.api;
 
+import com.bootx.audit.Audit;
 import com.bootx.common.Pageable;
 import com.bootx.common.Result;
 import com.bootx.controller.admin.BaseController;
@@ -53,7 +54,9 @@ public class SoftController extends BaseController {
 	 * @return
 	 */
 	@PostMapping("/orderBy")
+	@Audit(action = "软件列表")
 	public Result orderBy(Pageable pageable, String orderBy, Long categoryId, @CurrentUser Member member){
+		System.out.println(member);
 		String fromSql = "from soft";
 		if(categoryId!=null&&categoryId!=0){
 			fromSql = "from soft_categories,soft where softs_id=soft.id and categories_id="+categoryId;
@@ -119,7 +122,13 @@ public class SoftController extends BaseController {
 	@PostMapping("/detail")
 	public Result detail(Long id) {
 		Map<String, Object> data = jdbcTemplate.queryForMap("select fullName, score,size,downloads,name,logo,updateDate from soft where id=?", id);
-		data.putAll(jdbcTemplate.queryForMap("select introduce,memo,updatedContent from softinfo where soft_id=?",id));
+		try {
+			data.putAll(jdbcTemplate.queryForMap("select introduce,memo,updatedContent from softinfo where soft_id=?",id));
+		}catch (Exception e){
+			data.put("introduce","");
+			data.put("memo","");
+			data.put("updatedContent","");
+		}
 		List<Map<String, Object>> images = jdbcTemplate.queryForList("select url from softimage where soft_id=? and status=1;", id);
 		data.put("score",(data.get("score")+"").substring(0,3));
 
@@ -140,12 +149,14 @@ public class SoftController extends BaseController {
 
 
 	@PostMapping("/download")
+	@Audit(action = "软件下载")
 	public Result download(Long id) {
 		try {
 			Map<String,Object> downloadInfo = jdbcTemplate.queryForMap("select downloadUrl,name,versionName,size from soft where id=?", id);
 			if(StringUtils.startsWith(downloadInfo.get("downloadUrl")+"","http")&&StringUtils.endsWith(downloadInfo.get("downloadUrl")+"",".apk")){
 				// 下载次数加1
 				softService.updateDownloads(id,1);
+                downloadInfo.putIfAbsent("versionName", "1.0.0");
 				return Result.success(downloadInfo);
 			}
 		}catch (Exception ignored){
