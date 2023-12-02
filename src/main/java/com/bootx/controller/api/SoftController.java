@@ -92,7 +92,7 @@ public class SoftController extends BaseController {
 				item.put("score",(item.get("score")+"").substring(0,3));
 			});
 		}else if(StringUtils.equalsIgnoreCase("7",orderBy)){
-			maps = jdbcTemplate.queryForList("select size, id, downloads,logo,name,score,versionName "+fromSql+" order by downloadCount desc "+pageQuery);
+			maps = jdbcTemplate.queryForList("select size, id, downloads,logo,name,score,versionName "+fromSql+" order by downloads desc "+pageQuery);
 			maps.forEach(item->{
 				Long downloads = Long.valueOf(item.get("downloads") + "");
 				if(downloads>=10000){
@@ -121,7 +121,7 @@ public class SoftController extends BaseController {
 
 	@PostMapping("/detail")
 	public Result detail(Long id) {
-		Map<String, Object> data = jdbcTemplate.queryForMap("select fullName, score,size,downloads,name,logo,updateDate from soft where id=?", id);
+		Map<String, Object> data = jdbcTemplate.queryForMap("select versionCode,versionName,id,donationMember,donationIcon,reviewCount, fullName, score,size,downloads,name,logo,updateDate from soft where id=?", id);
 		try {
 			data.putAll(jdbcTemplate.queryForMap("select introduce,memo,updatedContent from softinfo where soft_id=?",id));
 		}catch (Exception e){
@@ -144,6 +144,7 @@ public class SoftController extends BaseController {
 			imageList.add(item.get("url")+"");
 		});
 		data.put("images",imageList);
+
 		return Result.success(data);
 	}
 

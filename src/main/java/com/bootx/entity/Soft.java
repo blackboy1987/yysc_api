@@ -3,6 +3,7 @@ package com.bootx.entity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
 
 import java.util.Date;
 import java.util.HashSet;
@@ -104,9 +105,25 @@ public class Soft extends BaseEntity<Long> {
     @Column(nullable = false)
     private Date monthDownloadsDate;
 
+    /**
+     * 评论数
+     */
     private Integer reviewCount;
 
     private String versionName;
+
+    private String versionCode;
+
+    /**
+     * 投币人数
+     */
+    @Column(nullable = false)
+    private Integer donationMember;
+    /**
+     * 投币数
+     */
+    @Column(nullable = false)
+    private Long donationIcon;
 
 
 
@@ -300,5 +317,29 @@ public class Soft extends BaseEntity<Long> {
 
     public void setVersionName(String versionName) {
         this.versionName = versionName;
+    }
+
+    public Integer getDonationMember() {
+        return donationMember;
+    }
+
+    public void setDonationMember(Integer donationMember) {
+        this.donationMember = donationMember;
+    }
+
+    public Long getDonationIcon() {
+        return donationIcon;
+    }
+
+    public void setDonationIcon(Long donationIcon) {
+        this.donationIcon = donationIcon;
+    }
+
+    public String getVersionCode() {
+        return versionCode;
+    }
+
+    public void setVersionCode(String versionCode) {
+        this.versionCode = versionCode;
     }
 }

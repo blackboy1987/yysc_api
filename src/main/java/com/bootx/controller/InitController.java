@@ -1,14 +1,8 @@
 package com.bootx.controller;
 
 import com.bootx.common.Result;
-import com.bootx.entity.Category;
-import com.bootx.entity.Member;
-import com.bootx.entity.Review;
-import com.bootx.entity.Soft;
-import com.bootx.service.CategoryService;
-import com.bootx.service.MemberService;
-import com.bootx.service.ReviewService;
-import com.bootx.service.SoftService;
+import com.bootx.entity.*;
+import com.bootx.service.*;
 import jakarta.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
@@ -20,9 +14,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 
+/**
+ * @author black
+ */
 @RestController
 @RequestMapping("/init")
 public class InitController {
@@ -37,6 +35,12 @@ public class InitController {
     private MemberService memberService;
     @Resource
     private ReviewService reviewService;
+    @Resource
+    private SoftInfoService softInfoService;
+    @Resource
+    private SoftExtService softExtService;
+    @Resource
+    private SoftImageService softImageService;
 
     @GetMapping
     public Result index() throws IOException {
@@ -216,6 +220,87 @@ public class InitController {
             }).start();
 
         }
+        return Result.success();
+    }
+
+    @GetMapping("/detail1")
+    public Result detail() throws IOException {
+        for (Long j = 1L; j < 100000L; j++) {
+            Soft soft = softService.find(j);
+            if(soft==null){
+                continue;
+            }
+            Document parse = null;
+            String url = "https://www.shouji.com.cn"+soft.getUrl();
+            try {
+                parse = Jsoup.parse(new URL(url).openStream(), "utf-8", url);
+            }catch (Exception e){
+                continue;
+            }
+            // 基本信息
+            Elements info_cent = parse.getElementsByClass("info_cent");
+            SoftExt softExt = new SoftExt();
+            softExt.setSoft(soft);
+            if(!info_cent.isEmpty()){
+                Element first = info_cent.first();
+                Elements span = first.getElementsByTag("span");
+                Elements p = first.getElementsByTag("p");
+                for (int i = 0; i < span.size(); i++) {
+                    String element = span.get(i).text();
+                    String text = p.get(i).text();
+                    if(StringUtils.equals("版本：",element.trim())){
+                        soft.setVersionName(text.trim());
+                    }else if(StringUtils.equals("大小：",element.trim())){
+                        soft.setSize(text.trim());
+                    }else if(StringUtils.equals("更新：",element.trim())){
+                        soft.setUpdateDate(text.trim());
+                    }else if(StringUtils.equals("资费：",element.trim())){
+                        if(StringUtils.contains("免费",text)){
+                            softExt.setPaidType(0);
+                        }else {
+                            softExt.setPaidType(1);
+                        }
+
+                    }else if(StringUtils.equals("广告：",element.trim())){
+                        if(StringUtils.contains("没有",text)){
+                            softExt.setAdType(0);
+                        }else {
+                            softExt.setAdType(1);
+                        }
+                    }
+                }
+
+
+            }
+            Elements processingbar = parse.getElementsByClass("processingbar");
+            if (!processingbar.isEmpty()){
+                Elements font = processingbar.first().getElementsByTag("font");
+                if(!font.isEmpty()){
+                    String score = font.text();
+                    soft.setScore(Double.valueOf(score));
+                }
+            }
+
+            // 评论
+            Elements lef1 = parse.getElementsByClass("Lef1_cent");
+            String html = lef1.html();
+            softInfoService.create(soft,html);
+
+            // 图片
+            Elements snapShotCont = parse.getElementsByClass("snapShotCont");
+            List<String> images = new ArrayList<>();
+            if(snapShotCont!=null){
+                Elements img = snapShotCont.first().getElementsByTag("img");
+                img.forEach(im->{
+                    images.add(im.attr("src"));
+                });
+            }
+            softImageService.create(soft,images);
+            softService.update(soft);
+            softExtService.create(softExt);
+
+        }
+
         return Result.success();
     }
 }

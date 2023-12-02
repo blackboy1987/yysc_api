@@ -2,16 +2,15 @@
 package com.bootx.service;
 
 import com.bootx.entity.Soft;
+import com.bootx.entity.SoftExt;
 import com.bootx.entity.SoftImage;
-
-import java.util.List;
 
 /**
  * @author black
  */
-public interface SoftImageService extends BaseService<SoftImage, Long> {
+public interface SoftExtService extends BaseService<SoftExt, Long> {
 
     void remove(Soft soft);
 
-    void create(Soft soft, List<String> images);
+    void create(SoftExt softExt);
 }
