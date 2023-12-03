@@ -32,7 +32,9 @@ public class FileController {
         file.transferTo(temp);
         UploadFileUtils.upload(path, temp);
         Map<String,Object> data = new HashMap<>();
-        data.put("url",UploadFileUtils.getUrl(path));
+        String url = UploadFileUtils.getUrl(path);
+        data.put("url",url);
+        System.out.println(url);
         return Result.success(data);
     }
 
