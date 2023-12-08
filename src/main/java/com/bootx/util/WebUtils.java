@@ -1,9 +1,4 @@
-/*
- * Copyright 2008-2018 shopxx.net. All rights reserved.
- * Support: localhost
- * License: localhost/license
- * FileId: QJSGdqYNWGjJpoBrkSdoLqaYfl0nRel7
- */
+
 package com.bootx.util;
 
 import jakarta.servlet.http.HttpServletRequest;
