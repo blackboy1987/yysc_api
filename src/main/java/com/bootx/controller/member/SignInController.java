@@ -43,7 +43,6 @@ public class SignInController extends BaseController {
 		Map<String,Object> data = new HashMap<>();
 		data.put("continuousSignInDays",0);
 		data.put("rank",0);
-		member = memberService.find(1L);
 		Boolean isSign = isSign(request, member);
 		if(!isSign){
 			SignInLog signInLog = signInLogService.create(member,request);
@@ -62,12 +61,22 @@ public class SignInController extends BaseController {
 			}
 			member.setSignInDate(new Date());
 			memberService.update(member);
-			data.put("days",member.getContinuousSignInDays());
-			data.put("rank",jdbcTemplate.queryForObject("select count(id) from signinlog where createdDate>=? and createdDate<?;",Integer.class,DateUtils.formatDateToString(new Date(),"yyyy-MM-dd 00:00:00"),DateUtils.formatDateToString(member.getSignInDate(),"yyyy-MM-dd H:mm:ss")));
 		}
-		return Result.success();
+		// 连续签到天数
+		data.put("isSign",isSign);
+		data.put("days",member.getContinuousSignInDays());
+		// 签到排名
+		data.put("rank",jdbcTemplate.queryForObject("select count(id) from signinlog where createdDate>=? and createdDate<?;",Integer.class,DateUtils.formatDateToString(new Date(),"yyyy-MM-dd 00:00:00"),DateUtils.formatDateToString(member.getSignInDate(),"yyyy-MM-dd H:mm:ss")));
+		data.put("list",jdbcTemplate.queryForList("select member.avatar,member.username,member.continuousSignInDays,DATE_FORMAT(signinlog.createdDate,'%Y-%m-%d %H:%i:%s') signDate from signinlog,member where member.id=signinlog.member_id and signinlog.createdDate>=? order by signinlog.createdDate desc",DateUtils.formatDateToString(new Date(),"yyyy-MM-dd 00:00:00")));
+		return Result.success(data);
 	}
 
+	/**
+	 * 判断是否签到
+	 * @param request
+	 * @param member
+	 * @return
+	 */
 	@PostMapping("/isSign")
 	public Boolean isSign(HttpServletRequest request, @CurrentUser Member member) {
 		Integer count = jdbcTemplate.queryForObject("select count(id) from signinlog where member_id=? and createdDate>=? and createdDate<?;",Integer.class,member.getId(),DateUtils.formatDateToString(new Date(),"yyyy-MM-dd 00:00:00"),DateUtils.formatDateToString(new Date(),"yyyy-MM-dd H:mm:ss"));

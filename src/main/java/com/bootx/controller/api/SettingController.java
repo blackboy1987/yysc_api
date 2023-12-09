@@ -29,7 +29,7 @@ public class SettingController extends BaseController {
 	}
 	private List<Map<String, Object>> initUserMenus() {
 		List<Map<String,Object>> userMenus = new ArrayList<>();
-		userMenus.add(initUserMenu("应用投稿","Rv1","TouGaoFrame"));
+		userMenus.add(initUserMenu("应用投稿","Rv1","TouGaoListFrame"));
 		userMenus.add(initUserMenu("应用更新","jp","AppUpdateFrame"));
 		userMenus.add(initUserMenu("我的收藏","jK","CollectFrame"));
 		userMenus.add(initUserMenu("签到","Yh","SignInFrame"));

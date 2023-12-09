@@ -22,4 +22,20 @@ public class Fan extends BaseEntity<Long>{
      */
     @ManyToOne(fetch = FetchType.LAZY)
     private Member fan;
+
+    public Member getMember() {
+        return member;
+    }
+
+    public void setMember(Member member) {
+        this.member = member;
+    }
+
+    public Member getFan() {
+        return fan;
+    }
+
+    public void setFan(Member fan) {
+        this.fan = fan;
+    }
 }

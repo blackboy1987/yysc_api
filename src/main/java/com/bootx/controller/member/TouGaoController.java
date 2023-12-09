@@ -6,10 +6,12 @@ import com.bootx.controller.admin.BaseController;
 import com.bootx.entity.Member;
 import com.bootx.entity.PointLog;
 import com.bootx.entity.SignInLog;
+import com.bootx.pojo.SoftPOJO;
 import com.bootx.security.CurrentUser;
 import com.bootx.service.MemberService;
 import com.bootx.service.PointLogService;
 import com.bootx.service.SignInLogService;
+import com.bootx.service.SoftService;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
@@ -17,10 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author black
@@ -35,6 +34,9 @@ public class TouGaoController extends BaseController {
 	private PointLogService pointLogService;
 	@Resource
 	private MemberService memberService;
+
+	@Resource
+	private SoftService softService;
 
 	/**
 	 * 获取分类
@@ -62,5 +64,12 @@ public class TouGaoController extends BaseController {
 		// 运营方式
 		// 应用优点
 		return Result.success();
+	}
+
+	@PostMapping("/save")
+	public Result save(HttpServletRequest request, SoftPOJO softPOJO, @CurrentUser Member member) {
+		softService.create(softPOJO);
+
+		return Result.success(softPOJO);
 	}
 }

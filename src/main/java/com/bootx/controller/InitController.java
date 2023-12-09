@@ -43,6 +43,9 @@ public class InitController {
     @Resource
     private SoftImageService softImageService;
 
+    @Resource
+    private FanService fanService;
+
     private static final ExecutorService executorService = Executors.newFixedThreadPool(10);
 
     @GetMapping
@@ -106,7 +109,6 @@ public class InitController {
                             soft = new Soft();
                         }
                         soft.setName(name);
-                        soft.setMemo(memo);
                         soft.setSize(size);
                         soft.setUrl(a.attr("href"));
                         soft.getCategories().add(category);
@@ -343,5 +345,29 @@ public class InitController {
             softService.update(soft);
             softExtService.create(softExt);
         });
+    }
+
+
+    @GetMapping("/fan")
+    public Result fan(Long start) {
+        for (Long j = 0L; j < 100000L; j++) {
+            Member member = memberService.find(j);
+            if(member!=null){
+                Integer index = 0;
+                Integer count = new Random().nextInt(50);
+                while (index<count){
+                    Long fanId = new Random().nextLong(1L,10000L);
+                    Member fan = memberService.find(fanId);
+                    if(fan !=null){
+                        executorService.execute(()->{
+                            fanService.create(member,fan);
+                        });
+                        index++;
+                    }
+                }
+            }
+        }
+
+        return Result.success();
     }
 }

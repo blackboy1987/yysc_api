@@ -3,13 +3,10 @@ package com.bootx.controller.member;
 
 import com.bootx.common.Result;
 import com.bootx.controller.admin.BaseController;
-import com.bootx.entity.Admin;
 import com.bootx.entity.Member;
 import com.bootx.security.CurrentUser;
-import com.bootx.service.AdminService;
 import com.bootx.service.MemberService;
 import jakarta.annotation.Resource;
-import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -46,6 +43,8 @@ public class IndexController extends BaseController {
 		}else{
 			data.put("nextPoint",12345);
 		}
+		data.put("concernCount",jdbcTemplate.queryForObject("select count(id) from fan where member_id=?",Long.class,member.getId()));
+		data.put("fanCount",jdbcTemplate.queryForObject("select count(id) from fan where fan_id=?",Long.class,member.getId()));
 		return Result.success(data);
 	}
 

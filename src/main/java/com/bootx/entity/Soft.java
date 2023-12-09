@@ -24,7 +24,7 @@ public class Soft extends BaseEntity<Long> {
      */
     private String channel;
 
-    @Column(unique = true,updatable = false,nullable = false)
+    @Column(unique = true)
     @JsonView({PageView.class})
     private String url;
 
@@ -33,9 +33,6 @@ public class Soft extends BaseEntity<Long> {
 
     @JsonView({PageView.class})
     private String size;
-
-    @JsonView({PageView.class})
-    private String memo;
 
     @JsonView({PageView.class})
     private String logo;
@@ -90,19 +87,16 @@ public class Soft extends BaseEntity<Long> {
     /**
      * 今日下载数更新日期
      */
-    @Column(nullable = false)
     private Date todayDownloadsDate;
 
     /**
      * 周点下载更新日期
      */
-    @Column(nullable = false)
     private Date weekDownloadsDate;
 
     /**
      * 月下载数更新日期
      */
-    @Column(nullable = false)
     private Date monthDownloadsDate;
 
     /**
@@ -164,14 +158,6 @@ public class Soft extends BaseEntity<Long> {
 
     public void setSize(String size) {
         this.size = size;
-    }
-
-    public String getMemo() {
-        return memo;
-    }
-
-    public void setMemo(String memo) {
-        this.memo = memo;
     }
 
     public String getLogo() {
