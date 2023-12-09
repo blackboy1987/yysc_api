@@ -10,6 +10,7 @@ import com.bootx.service.AdminService;
 import com.bootx.service.MemberService;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -32,6 +33,19 @@ public class IndexController extends BaseController {
 		Member member = memberService.getCurrent();
 		Map<String,Object> data = new HashMap<>();
 		data.put("username",member.getUsername());
+		//
+		if(StringUtils.isNotBlank(member.getAvatar())){
+			data.put("avatar",member.getAvatar());
+		}else{
+			data.put("avatar","https://bootx-tuchuang.oss-cn-hangzhou.aliyuncs.com/avatar/"+(member.getId()%50)+".png");
+		}
+
+		data.put("point",member.getPoint());
+		if(member.getMemberRank()!=null){
+			data.put("nextPoint",member.getMemberRank().getPoint());
+		}else{
+			data.put("nextPoint",12345);
+		}
 		return Result.success(data);
 	}
 

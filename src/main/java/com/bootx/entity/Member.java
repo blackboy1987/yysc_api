@@ -1,9 +1,7 @@
 package com.bootx.entity;
 
 import com.fasterxml.jackson.annotation.JsonView;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Transient;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -58,6 +56,11 @@ public class Member extends User {
     @Column(nullable = false)
     @JsonView({PageView.class})
     private Long point;
+    @NotNull
+    @Min(0)
+    @Column(nullable = false)
+    @JsonView({PageView.class})
+    private Long remainPoint;
 
 
     /**
@@ -84,6 +87,12 @@ public class Member extends User {
      */
     @JsonView({PageView.class})
     private Date signInDate;
+    @JsonView({PageView.class})
+    private String avatar;
+
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY)
+    private MemberRank memberRank;
 
     /**
      * 获取用户名
@@ -153,6 +162,14 @@ public class Member extends User {
         this.point = point;
     }
 
+    public Long getRemainPoint() {
+        return remainPoint;
+    }
+
+    public void setRemainPoint(Long remainPoint) {
+        this.remainPoint = remainPoint;
+    }
+
     public Integer getSignInDays() {
         return signInDays;
     }
@@ -175,6 +192,22 @@ public class Member extends User {
 
     public void setSignInDate(Date signInDate) {
         this.signInDate = signInDate;
+    }
+
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
+    }
+
+    public MemberRank getMemberRank() {
+        return memberRank;
+    }
+
+    public void setMemberRank(MemberRank memberRank) {
+        this.memberRank = memberRank;
     }
 
     @Transient

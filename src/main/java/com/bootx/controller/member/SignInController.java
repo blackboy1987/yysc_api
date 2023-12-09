@@ -49,6 +49,7 @@ public class SignInController extends BaseController {
 			SignInLog signInLog = signInLogService.create(member,request);
 			PointLog pointLog = pointLogService.create(member,signInLog.getRewardPoints(),"签到奖励",0);
 			member.setPoint(member.getPoint()+pointLog.getCredit());
+			member.setRemainPoint(member.getRemainPoint()+pointLog.getCredit());
 			// 调整累计签到和连续签到数据
 			member.setSignInDays(member.getSignInDays()+1);
 			// 检测昨日有没有签到

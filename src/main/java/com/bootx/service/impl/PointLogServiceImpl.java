@@ -27,7 +27,7 @@ public class PointLogServiceImpl extends BaseServiceImpl<PointLog, Long> impleme
 	@Override
 	public PointLog create(Member member, Long point, String memo,Integer type) {
 		PointLog pointLog = new PointLog();
-		pointLog.setBeforePoint(member.getPoint());
+		pointLog.setBeforePoint(member.getRemainPoint());
 		pointLog.setMember(member);
 		pointLog.setType(type);
 		pointLog.setCredit(point);

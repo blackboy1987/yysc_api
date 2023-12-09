@@ -36,8 +36,8 @@ public class SoftIconLogController extends BaseController {
 	@PostMapping("/reward")
 	public Result reward(HttpServletRequest request, @CurrentUser Member member, SoftIconLog softIconLog,Long softId) {
 		Soft soft = softService.find(softId);
-		member.setPoint(member.getPoint()-softIconLog.getPoint());
-		if(member.getPoint()<0){
+		member.setRemainPoint(member.getRemainPoint()-softIconLog.getPoint());
+		if(member.getRemainPoint()<0){
 			return Result.error("您没有足够的硬币哦！");
 		}
 		memberService.update(member);
