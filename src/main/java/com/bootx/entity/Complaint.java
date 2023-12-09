@@ -4,6 +4,10 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.ManyToOne;
 
+/**
+ * 投诉
+ * @author black
+ */
 @Entity
 public class Complaint extends BaseEntity<Long>{
 
