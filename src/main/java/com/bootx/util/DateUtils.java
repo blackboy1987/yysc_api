@@ -485,4 +485,55 @@ public class DateUtils {
         int days = seconds/60*60*24;
         return days+"天前";
     }
+
+    public static String formatDateInfo(Date date) {
+        if(date==null){
+            return "";
+        }
+        String info = "";
+        Date now = new Date();
+        long nowTime = now.getTime();
+        long time = date.getTime();
+        long duration = nowTime - time;
+        long yearSeconds = 86400*1000*365L;
+        long monthSeconds = 86400*1000*30L;
+        long daySeconds = 86400*1000;
+        long hourSeconds = 3600*1000;
+        long minuteSeconds = 60*1000;
+        long seconds = 60*1000;
+
+
+        long years = Math.floorDiv(duration,yearSeconds);
+        long months = Math.floorDiv(duration-years*yearSeconds,monthSeconds);
+        long days = Math.floorDiv(duration-years*yearSeconds-months*monthSeconds,daySeconds);
+        long hours = Math.floorDiv(duration-years*yearSeconds-months*monthSeconds-days*daySeconds,hourSeconds);
+        long minute = Math.floorDiv(duration-years*yearSeconds-months*monthSeconds-days*daySeconds-hourSeconds*hours,minuteSeconds);
+        long seconds1 = Math.floorDiv(duration-years*yearSeconds-months*monthSeconds-days*daySeconds-hourSeconds*hours-minute*minuteSeconds,seconds);
+        if(years>0){
+            return years+"年前";
+        }
+        if(months>0){
+            return months+"月前";
+        }
+        if(days>0){
+            return days+"天前";
+        }
+        if(hours>0){
+            return hours+"小时前";
+        }
+        if(minute>0){
+            return minute+"分钟前";
+        }
+        if(seconds1>0){
+            return seconds1+"秒钟前";
+        }
+
+        return info;
+    }
+
+    public static void main(String[] args) {
+        String dateStr = "2023-11-29 12:25:49";
+        String s = formatDateInfo(DateUtils.formatStringToDate(dateStr, "yyyy-MM-dd HH:mm:ss"));
+        System.out.println(s);
+    }
 }

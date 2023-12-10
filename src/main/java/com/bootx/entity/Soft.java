@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 
 import java.util.Date;
 import java.util.HashSet;
@@ -118,6 +119,21 @@ public class Soft extends BaseEntity<Long> {
      */
     @Column(nullable = false)
     private Long donationIcon;
+    /**
+     * 状态
+     * 0：待审
+     * 1：审核通过
+     * 2：审核拒绝
+     * 100: 草稿
+     */
+    @Column(nullable = false)
+    private Integer status;
+
+    @NotNull
+    @JoinColumn(nullable = false,updatable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Member member;
+
 
 
 
@@ -327,5 +343,21 @@ public class Soft extends BaseEntity<Long> {
 
     public void setVersionCode(String versionCode) {
         this.versionCode = versionCode;
+    }
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
+
+    public Member getMember() {
+        return member;
+    }
+
+    public void setMember(Member member) {
+        this.member = member;
     }
 }

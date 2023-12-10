@@ -49,8 +49,10 @@ public class SoftServiceImpl extends BaseServiceImpl<Soft, Long> implements Soft
     }
 
     @Override
-    public void create(SoftPOJO softPOJO) {
+    public void create(SoftPOJO softPOJO,Member member) {
         Soft soft = new Soft();
+        soft.setMember(member);
+        soft.setStatus(0);
         init(soft,softPOJO);
         initCategory(soft,softPOJO);
         super.save(soft);

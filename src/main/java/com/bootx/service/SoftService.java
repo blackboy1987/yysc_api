@@ -1,6 +1,7 @@
 
 package com.bootx.service;
 
+import com.bootx.entity.Member;
 import com.bootx.entity.Soft;
 import com.bootx.pojo.SoftPOJO;
 
@@ -13,5 +14,5 @@ public interface SoftService extends BaseService<Soft, Long> {
 
     void updateDownloads(Long id,int i);
 
-    void create(SoftPOJO softPOJO);
+    void create(SoftPOJO softPOJO, Member member);
 }
