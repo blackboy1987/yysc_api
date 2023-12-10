@@ -35,6 +35,9 @@ public class SoftInfo extends BaseEntity<Long> {
     @Column(columnDefinition = "longtext")
     private String updatedContent;
 
+
+
+
     public Soft getSoft() {
         return soft;
     }

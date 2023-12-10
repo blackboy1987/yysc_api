@@ -47,6 +47,15 @@ public class Soft extends BaseEntity<Long> {
     @JsonView({PageView.class})
     private String downloadUrl;
 
+    /**
+     * 下载地址的密码
+     */
+    @JsonView({PageView.class})
+    private String password;
+
+
+
+
     @OneToOne(mappedBy = "soft", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private SoftInfo softInfo;
 
@@ -125,6 +134,8 @@ public class Soft extends BaseEntity<Long> {
      * 1：审核通过
      * 2：审核拒绝
      * 100: 草稿
+     * 101: 用户删除
+     * 102：后台删除
      */
     @Column(nullable = false)
     private Integer status;
@@ -134,9 +145,10 @@ public class Soft extends BaseEntity<Long> {
     @ManyToOne(fetch = FetchType.LAZY)
     private Member member;
 
+    private Integer minSdkVersion;
+    private Integer targetSdkVersion;
 
-
-
+    private String packageName;
 
 
 
@@ -206,6 +218,14 @@ public class Soft extends BaseEntity<Long> {
 
     public void setDownloadUrl(String downloadUrl) {
         this.downloadUrl = downloadUrl;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public Double getScore() {
@@ -359,5 +379,29 @@ public class Soft extends BaseEntity<Long> {
 
     public void setMember(Member member) {
         this.member = member;
+    }
+
+    public Integer getMinSdkVersion() {
+        return minSdkVersion;
+    }
+
+    public void setMinSdkVersion(Integer minSdkVersion) {
+        this.minSdkVersion = minSdkVersion;
+    }
+
+    public Integer getTargetSdkVersion() {
+        return targetSdkVersion;
+    }
+
+    public void setTargetSdkVersion(Integer targetSdkVersion) {
+        this.targetSdkVersion = targetSdkVersion;
+    }
+
+    public String getPackageName() {
+        return packageName;
+    }
+
+    public void setPackageName(String packageName) {
+        this.packageName = packageName;
     }
 }

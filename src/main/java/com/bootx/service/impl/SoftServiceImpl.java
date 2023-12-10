@@ -10,6 +10,7 @@ import com.bootx.util.DateUtils;
 import com.bootx.util.ImageUtils;
 import com.bootx.util.UploadUtils;
 import jakarta.annotation.Resource;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.springframework.stereotype.Service;
 
@@ -62,6 +63,31 @@ public class SoftServiceImpl extends BaseServiceImpl<Soft, Long> implements Soft
 
     }
 
+    /**
+     * 状态
+     * 0：待审
+     * 1：审核通过
+     * 2：审核拒绝
+     * 100: 草稿
+     */
+    @Override
+    public String getStatus(String status) {
+        if(StringUtils.equals("0",status)){
+           return "审核中";
+        }
+        if(StringUtils.equals("1",status)){
+            return "已上架";
+        }
+        if(StringUtils.equals("2",status)){
+            return "未通过";
+        }
+        if(StringUtils.equals("100",status)){
+            return "草稿";
+        }
+
+        return null;
+    }
+
     private void initSoftExt(Soft soft, SoftPOJO softPOJO) {
         SoftExt softExt = new SoftExt();
         softExt.setAdType(softPOJO.getAdType0());
@@ -78,6 +104,9 @@ public class SoftServiceImpl extends BaseServiceImpl<Soft, Long> implements Soft
         softInfo.setIntroduce(softPOJO.getIntroduce());
         softInfo.setMemo(softPOJO.getMemo());
         softInfo.setUpdatedContent(softPOJO.getUpdatedContent());
+
+
+
         softInfo.setSoft(soft);
         softInfoDao.persist(softInfo);
     }
@@ -124,6 +153,15 @@ public class SoftServiceImpl extends BaseServiceImpl<Soft, Long> implements Soft
         soft.setWeekDownloads(0L);
         soft.setTodayDownloadsDate(null);
         soft.setWeekDownloadsDate(null);
+        soft.setDownloadUrl(softPOJO.getDownloadUrl());
+        soft.setPassword(softPOJO.getPassword());
+        soft.setMinSdkVersion(softPOJO.getMinSdkVersion());
+        soft.setTargetSdkVersion(softPOJO.getTargetSdkVersion());
+        soft.setPackageName(softPOJO.getPackageName());
+
+
+
+
 
         String path = "yysc/"+DateUtils.formatDateToString(new Date(),"yyyy/MM/dd/")+ UUID.randomUUID().toString().replace("-","")+".png";
         File temp = new File(SystemUtils.getJavaIoTmpDir(),path);
@@ -133,5 +171,15 @@ public class SoftServiceImpl extends BaseServiceImpl<Soft, Long> implements Soft
         ImageUtils.base64ToImage(softPOJO.getAppLogo(),temp);
         soft.setLogo(UploadUtils.upload(path,temp));
         System.out.println(soft.getLogo());
+    }
+
+    @Override
+    public void delete(Soft soft) {
+        jdbcTemplate.update("delete from softimage where soft_id=?;",soft.getId());
+        jdbcTemplate.update("delete from softinfo where soft_id=?;",soft.getId());
+        jdbcTemplate.update("delete from softext where soft_id=?;",soft.getId());
+        jdbcTemplate.update("delete from review where soft_id=?;",soft.getId());
+        jdbcTemplate.update("delete from softiconlog where soft_id=?;",soft.getId());
+        super.delete(soft);
     }
 }

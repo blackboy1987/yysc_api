@@ -15,4 +15,6 @@ public interface SoftService extends BaseService<Soft, Long> {
     void updateDownloads(Long id,int i);
 
     void create(SoftPOJO softPOJO, Member member);
+
+    String getStatus(String status);
 }

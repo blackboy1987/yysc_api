@@ -17,8 +17,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author black
@@ -159,20 +161,14 @@ public class SoftController extends BaseController {
 	}
 
 
-	@PostMapping("/download")
-	@Audit(action = "软件下载")
-	public Result download(Long id) {
+	@PostMapping("/more")
+	@Audit(action = "更多信息")
+	public Result more(Long id) {
 		try {
-			Map<String,Object> downloadInfo = jdbcTemplate.queryForMap("select downloadUrl,name,versionName,size from soft where id=?", id);
-			if(StringUtils.startsWith(downloadInfo.get("downloadUrl")+"","http")&&StringUtils.endsWith(downloadInfo.get("downloadUrl")+"",".apk")){
-				// 下载次数加1
-				softService.updateDownloads(id,1);
-                downloadInfo.putIfAbsent("versionName", "1.0.0");
-				return Result.success(downloadInfo);
-			}
+			return Result.success(jdbcTemplate.queryForMap("select size,packageName,minSdkVersion,targetSdkVersion,versionName,versionCode from soft where id=?", id));
 		}catch (Exception ignored){
 
 		}
-		return Result.error("暂无下载地址");
+		return Result.success(Collections.emptyMap());
 	}
 }

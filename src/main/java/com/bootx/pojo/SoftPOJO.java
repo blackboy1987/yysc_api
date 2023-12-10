@@ -11,6 +11,7 @@ public class SoftPOJO implements Serializable {
     private String memo;
     private String introduce;
     private String updatedContent;
+    private String packageName;
     private Integer adType0;
     private Integer adType1;
     private Integer adType2;
@@ -25,6 +26,10 @@ public class SoftPOJO implements Serializable {
     private Integer minSdkVersion;
     private Integer targetSdkVersion;
     private Long size;
+
+    private String downloadUrl;
+
+    private String password;
 
     public String getTitle() {
         return title;
@@ -168,5 +173,29 @@ public class SoftPOJO implements Serializable {
 
     public void setSize(Long size) {
         this.size = size;
+    }
+
+    public String getDownloadUrl() {
+        return downloadUrl;
+    }
+
+    public void setDownloadUrl(String downloadUrl) {
+        this.downloadUrl = downloadUrl;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getPackageName() {
+        return packageName;
+    }
+
+    public void setPackageName(String packageName) {
+        this.packageName = packageName;
     }
 }

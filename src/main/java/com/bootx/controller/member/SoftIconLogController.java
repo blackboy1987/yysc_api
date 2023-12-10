@@ -33,6 +33,14 @@ public class SoftIconLogController extends BaseController {
 	@Resource
 	private SoftService softService;
 
+	/**
+	 * 投币
+	 * @param request
+	 * @param member
+	 * @param softIconLog
+	 * @param softId
+	 * @return
+	 */
 	@PostMapping("/reward")
 	public Result reward(HttpServletRequest request, @CurrentUser Member member, SoftIconLog softIconLog,Long softId) {
 		Soft soft = softService.find(softId);
