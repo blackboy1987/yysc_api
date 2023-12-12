@@ -30,6 +30,7 @@ public class IndexController extends BaseController {
 		Member member = memberService.getCurrent();
 		Map<String,Object> data = new HashMap<>();
 		data.put("username",member.getUsername());
+		data.put("id",member.getId());
 		//
 		if(StringUtils.isNotBlank(member.getAvatar())){
 			data.put("avatar",member.getAvatar());
