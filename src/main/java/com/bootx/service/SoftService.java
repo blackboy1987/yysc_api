@@ -1,9 +1,13 @@
 
 package com.bootx.service;
 
+import com.bootx.common.Pageable;
 import com.bootx.entity.Member;
 import com.bootx.entity.Soft;
 import com.bootx.pojo.SoftPOJO;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author black
@@ -17,4 +21,6 @@ public interface SoftService extends BaseService<Soft, Long> {
     void create(SoftPOJO softPOJO, Member member);
 
     String getStatus(String status);
+
+    List<Map<String, Object>> get(Pageable pageable, String orderBy, Long categoryId);
 }

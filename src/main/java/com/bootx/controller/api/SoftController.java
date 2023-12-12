@@ -8,8 +8,11 @@ import com.bootx.controller.admin.BaseController;
 import com.bootx.entity.BaseEntity;
 import com.bootx.entity.Member;
 import com.bootx.security.CurrentUser;
+import com.bootx.service.RedisService;
 import com.bootx.service.SoftService;
+import com.bootx.util.JsonUtils;
 import com.fasterxml.jackson.annotation.JsonView;
+import com.fasterxml.jackson.core.type.TypeReference;
 import jakarta.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,6 +31,9 @@ import java.util.stream.Collectors;
 @RestController("ApiSoftController")
 @RequestMapping("/api/soft")
 public class SoftController extends BaseController {
+
+	@Resource
+	private RedisService redisService;
 
 	@Resource
 	private SoftService softService;
@@ -58,76 +64,18 @@ public class SoftController extends BaseController {
 	@PostMapping("/orderBy")
 	@Audit(action = "软件列表")
 	public Result orderBy(Pageable pageable, String orderBy, Long categoryId, @CurrentUser Member member){
-		String fromSql = "from soft";
-		if(categoryId!=null&&categoryId!=0){
-			fromSql = "from soft_categories,soft where softs_id=soft.id and categories_id="+categoryId;
-		}
+		String cacheKey = orderBy+"_"+categoryId+"_"+pageable.getPageNumber()+"_"+pageable.getPageSize();
 		List<Map<String, Object>> maps;
-		String pageQuery = "limit "+(pageable.getPageNumber()-1)*pageable.getPageSize()+","+ pageable.getPageSize();
-		if(StringUtils.equalsIgnoreCase("00",orderBy)){
-			maps = jdbcTemplate.queryForList("select size, score,versionName, id, downloads,logo,name "+fromSql+" order by downloads desc "+pageQuery);
-			maps.forEach(item->{
-				Long downloads = Long.valueOf(item.get("downloads") + "");
-				if(downloads>=10000){
-					item.put("memo",String.format("%.2f",downloads/10000.0)+"万次下载");
-				}else{
-					item.put("memo",downloads+"次下载");
-				}
-				item.put("score",(item.get("score")+"").substring(0,3));
+		try {
+			maps = JsonUtils.toObject(redisService.get(cacheKey), new TypeReference<List<Map<String, Object>>>() {
 			});
-		}else if(StringUtils.equalsIgnoreCase("01",orderBy)){
-			maps = jdbcTemplate.queryForList("select id,reviewCount,score,logo,name,versionName,size "+fromSql+" order by score desc "+pageQuery);
-			maps.forEach(item->{
-				item.put("memo","今日"+(item.get("reviewCount")==null?0:item.get("reviewCount"))+"条评论");
-				item.put("score",(item.get("score")+"").substring(0,3));
-			});
-		}else if(StringUtils.equalsIgnoreCase("2",orderBy)){
-			maps = jdbcTemplate.queryForList("SELECT size, id,downloads,logo,name,score FROM soft WHERE id >= ((SELECT MAX(id) FROM soft)-(SELECT MIN(id) FROM soft)) * RAND() + (SELECT MIN(id) FROM soft) LIMIT 20");
-			maps.forEach(item->{
-				Long downloads = Long.valueOf(item.get("downloads") + "");
-				if(downloads>=10000){
-					item.put("memo",String.format("%.2f",downloads/10000.0)+"万次下载");
-				}else{
-					item.put("memo",downloads+"次下载");
-				}
-				item.put("score",(item.get("score")+"").substring(0,3));
-			});
-		}else if(StringUtils.equalsIgnoreCase("3",orderBy)){
-			maps = jdbcTemplate.queryForList("select size, id, downloads,logo,name,score,versionName,updateDate "+fromSql+" order by updateDate desc "+pageQuery);
-			maps.forEach(item->{
-				Long downloads = Long.valueOf(item.get("downloads") + "");
-				if(downloads>=10000){
-					item.put("memo",String.format("%.2f",downloads/10000.0)+"万次下载");
-				}else{
-					item.put("memo",downloads+"次下载");
-				}
-				item.put("score",(item.get("score")+"").substring(0,3));
-			});
-		}else if(StringUtils.equalsIgnoreCase("7",orderBy)){
-			maps = jdbcTemplate.queryForList("select size, id, downloads,logo,name,score,versionName "+fromSql+" order by downloads desc "+pageQuery);
-			maps.forEach(item->{
-				Long downloads = Long.valueOf(item.get("downloads") + "");
-				if(downloads>=10000){
-					item.put("memo",String.format("%.2f",downloads/10000.0)+"万次下载");
-				}else{
-					item.put("memo",downloads+"次下载");
-				}
-				item.put("score",(item.get("score")+"").substring(0,3));
-			});
-		}else if(StringUtils.equalsIgnoreCase("8",orderBy)){
-			maps = jdbcTemplate.queryForList("select size, id,logo,name "+fromSql+" order by downloads desc "+pageQuery);
-		}else{
-			maps = jdbcTemplate.queryForList("select size, id,downloads ,logo,name,score "+fromSql+" order by downloads desc "+pageQuery);
-			maps.forEach(item->{
-				Long downloads = Long.valueOf(item.get("downloads") + "");
-				if(downloads>=10000){
-					item.put("memo",String.format("%.2f",downloads/10000.0)+"万次下载");
-				}else{
-					item.put("memo",downloads+"次下载");
-				}
-				item.put("score",(item.get("score")+"").substring(0,3));
-			});
+		}catch (Exception e){
+			maps = softService.get(pageable,orderBy,categoryId);
+			if(!maps.isEmpty()){
+				redisService.set(cacheKey,JsonUtils.toJson(maps));
+			}
 		}
+
 		return Result.success(maps);
 	}
 
@@ -150,7 +98,6 @@ public class SoftController extends BaseController {
 		}else{
 			data.put("downloads",downloads+"次下载");
 		}
-
 		List<String> imageList = new ArrayList<>();
 		images.forEach(item->{
 			imageList.add(item.get("url")+"");
