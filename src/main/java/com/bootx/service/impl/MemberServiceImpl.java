@@ -38,6 +38,11 @@ public class MemberServiceImpl extends BaseServiceImpl<Member, Long> implements 
 	}
 
 	@Override
+	public boolean usernameUnique(Long id, String username) {
+		return memberDao.unique(id, "username", StringUtils.lowerCase(username));
+	}
+
+	@Override
 	public Member getCurrent() {
 		try {
 			HttpServletRequest request = WebUtils.getRequest();

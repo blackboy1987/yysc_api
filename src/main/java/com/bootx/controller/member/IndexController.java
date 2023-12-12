@@ -26,8 +26,7 @@ public class IndexController extends BaseController {
 	private MemberService memberService;
 
 	@PostMapping("/currentUser")
-	public Result currentUser() {
-		Member member = memberService.getCurrent();
+	public Result currentUser(@CurrentUser Member member) {
 		Map<String,Object> data = new HashMap<>();
 		data.put("username",member.getUsername());
 		data.put("id",member.getId());
@@ -47,6 +46,17 @@ public class IndexController extends BaseController {
 		data.put("concernCount",jdbcTemplate.queryForObject("select count(id) from fan where member_id=?",Long.class,member.getId()));
 		data.put("fanCount",jdbcTemplate.queryForObject("select count(id) from fan where fan_id=?",Long.class,member.getId()));
 		return Result.success(data);
+	}
+
+	@PostMapping("/update")
+	public Result update(String username,@CurrentUser Member member) {
+		/*if(memberService.usernameUnique(member.getId(),username)){
+			member.setUsername(username);
+			memberService.update(member);
+			return Result.success();
+		}
+		return Result.error("昵称已存在");*/
+		return Result.error("暂不支持修改昵称");
 	}
 
 	@PostMapping("/index")
