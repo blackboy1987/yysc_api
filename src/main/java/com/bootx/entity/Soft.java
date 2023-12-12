@@ -17,7 +17,7 @@ import java.util.Set;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Soft extends BaseEntity<Long> {
 
-    @JsonView({PageView.class})
+    @JsonView({PageView.class,DownloadView.class})
     private String name;
 
     /**
@@ -32,10 +32,10 @@ public class Soft extends BaseEntity<Long> {
     @ManyToMany(fetch = FetchType.LAZY)
     private Set<Category> categories = new HashSet<>();
 
-    @JsonView({PageView.class})
+    @JsonView({PageView.class,DownloadView.class})
     private String size;
 
-    @JsonView({PageView.class})
+    @JsonView({PageView.class,DownloadView.class})
     private String logo;
 
     @JsonView({PageView.class})
@@ -44,7 +44,7 @@ public class Soft extends BaseEntity<Long> {
     @JsonView({PageView.class})
     private String updateDate;
 
-    @JsonView({PageView.class})
+    @JsonView({PageView.class,DownloadView.class})
     private String downloadUrl;
 
     /**
@@ -114,6 +114,7 @@ public class Soft extends BaseEntity<Long> {
      */
     private Integer reviewCount;
 
+    @JsonView({DownloadView.class})
     private String versionName;
 
     private String versionCode;
@@ -148,6 +149,7 @@ public class Soft extends BaseEntity<Long> {
     private Integer minSdkVersion;
     private Integer targetSdkVersion;
 
+    @JsonView({DownloadView.class})
     private String packageName;
 
 
@@ -404,4 +406,7 @@ public class Soft extends BaseEntity<Long> {
     public void setPackageName(String packageName) {
         this.packageName = packageName;
     }
+
+
+    public interface DownloadView extends DefaultView{}
 }

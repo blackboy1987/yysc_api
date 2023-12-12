@@ -10,7 +10,7 @@ import com.fasterxml.jackson.annotation.JsonView;
  * @author IGOMALL  Team
  * @version 1.0
  */
-@JsonView({BaseEntity.PageView.class, BaseEntity.ListView.class, BaseEntity.EditView.class, BaseEntity.ViewView.class, BaseEntity.TreeView.class, BaseEntity.IdView.class, BaseEntity.BaseView.class})
+@JsonView({BaseEntity.PageView.class, BaseEntity.ListView.class, BaseEntity.EditView.class, BaseEntity.ViewView.class, BaseEntity.TreeView.class, BaseEntity.IdView.class, BaseEntity.BaseView.class, BaseEntity.DefaultView.class})
 public final class Result {
 
 	private Integer code;

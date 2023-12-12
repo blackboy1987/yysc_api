@@ -51,7 +51,9 @@ public abstract class BaseEntity<ID extends Serializable> implements Serializabl
 	public interface Update extends Default {
 
 	}
+	public interface DefaultView {
 
+	}
 	/**
 	 * 基础视图
 	 */

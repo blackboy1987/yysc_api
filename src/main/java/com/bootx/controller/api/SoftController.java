@@ -7,6 +7,7 @@ import com.bootx.common.Result;
 import com.bootx.controller.admin.BaseController;
 import com.bootx.entity.BaseEntity;
 import com.bootx.entity.Member;
+import com.bootx.entity.Soft;
 import com.bootx.security.CurrentUser;
 import com.bootx.service.RedisService;
 import com.bootx.service.SoftService;
@@ -117,5 +118,21 @@ public class SoftController extends BaseController {
 
 		}
 		return Result.success(Collections.emptyMap());
+	}
+
+	@PostMapping("/download")
+	@Audit(action = "软件下载")
+	@JsonView(Soft.DownloadView.class)
+	public Result download(Long id) {
+		Soft soft = softService.find(id);
+		if(soft == null){
+			return Result.error("软件不存在");
+		}
+		if(StringUtils.isBlank(soft.getDownloadUrl())){
+			return Result.error("暂无下载地址");
+		}
+		softService.updateDownloads(id,1);
+
+		return Result.success(soft);
 	}
 }

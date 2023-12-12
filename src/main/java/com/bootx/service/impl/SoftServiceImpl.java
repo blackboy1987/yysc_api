@@ -42,6 +42,7 @@ public class SoftServiceImpl extends BaseServiceImpl<Soft, Long> implements Soft
         Soft soft = find(id);
         if (soft != null) {
             soft.setDownloads(soft.getDownloads() + i);
+            update(soft);
         }
     }
 
