@@ -46,6 +46,9 @@ public class InitController {
     @Resource
     private FanService fanService;
 
+    @Resource
+    private MemberRankService memberRankService;
+
     private static final ExecutorService executorService = Executors.newFixedThreadPool(10);
 
     @GetMapping
@@ -365,6 +368,21 @@ public class InitController {
                         index++;
                     }
                 }
+            }
+        }
+
+        return Result.success();
+    }
+
+    @GetMapping("/memberRank")
+    public Result memberRank() {
+        List<MemberRank> memberRanks = memberRankService.findAll();
+        for (Long j = 0L; j < 100000L; j++) {
+            Member member = memberService.find(j);
+            int i = new Random().nextInt(memberRanks.size());
+            if(member!=null){
+                member.setMemberRank(memberRanks.get(i));
+                memberService.update(member);
             }
         }
 

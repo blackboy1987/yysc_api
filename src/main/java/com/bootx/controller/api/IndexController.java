@@ -68,20 +68,20 @@ public class IndexController extends BaseController {
 		return Result.success(jdbcTemplate.queryForList("select id,downloads,logo from soft order by downloads desc limit 50;"));
 	}
 
-	@PostMapping("/homeCenterBar")
-	public Result homeCenterBar(HttpServletRequest request) {
+
+	/**
+	 * 广告
+	 * @return
+	 */
+	@PostMapping("/adConfig")
+	public Map<String,Object> adConfig(){
 		try {
-			String s = jdbcTemplate.queryForObject("select homeCenterBar from setting order by createdDate desc limit 1", String.class);
-			List<ToolBar> list = JsonUtils.toObject(s, new TypeReference<List<ToolBar>>() {
-			});
-			return Result.success(list.stream().filter(ToolBar::getIsEnabled).collect(Collectors.toList()));
+
+			return jdbcTemplate.queryForMap("select bannerAdId,feedAdId,fullScreenVideoAdId,interAdId,mediaId,rewardVideoAdId,splashAdId,templateAdId,videoFeedAdId from adconfig order by id desc limit 1");
 		}catch (Exception e){
-			return Result.success(Collections.emptyList());
+			return Collections.emptyMap();
 		}
 	}
 
-	@PostMapping("/activity")
-	public Result active(HttpServletRequest request) {
-		return Result.success(jdbcTemplate.queryForList("select image,title,url from activity order by orders asc"));
-	}
+
 }

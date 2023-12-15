@@ -6,6 +6,7 @@ import com.bootx.controller.admin.BaseController;
 import com.bootx.entity.Member;
 import com.bootx.security.CurrentUser;
 import com.bootx.service.MemberService;
+import com.bootx.util.DateUtils;
 import jakarta.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,8 +27,7 @@ public class IndexController extends BaseController {
 	private MemberService memberService;
 
 	@PostMapping("/currentUser")
-	public Result currentUser() {
-		Member member = memberService.getCurrent();
+	public Result currentUser(@CurrentUser Member member) {
 		Map<String,Object> data = new HashMap<>();
 		data.put("username",member.getUsername());
 		data.put("id",member.getId());
@@ -53,6 +53,31 @@ public class IndexController extends BaseController {
 	public Result index(@CurrentUser Member member) {
 		Map<String,Object> data = new HashMap<>();
 		data.put("username",member.getUsername());
+		return Result.success(data);
+	}
+
+
+	/**
+	 * 用户信息
+	 * @param member
+	 * 		当前登录用户
+	 * @param id
+	 * 		用户id
+	 * @return
+	 * 		用户信息
+	 */
+	@PostMapping("/load")
+	public Result load(@CurrentUser Member member,Long id) {
+		Map<String,Object> data = new HashMap<>();
+		Member member1 = memberService.find(id);
+		data.put("avatar",member1.getAvatar());
+		data.put("username",member1.getUsername());
+		data.put("createdDate", DateUtils.formatDateToString(member1.getCreatedDate(),"yyyy年MM月dd日"));
+		data.put("point",member1.getRemainPoint());
+		data.put("rankName",member1.getMemberRankName());
+		data.put("memo","每日一言");
+		data.put("concernCount",jdbcTemplate.queryForObject("select count(id) from fan where member_id=?",Long.class, member.getId()));
+		data.put("fanCount",jdbcTemplate.queryForObject("select count(id) from fan where fan_id=?",Long.class, member.getId()));
 		return Result.success(data);
 	}
 }
