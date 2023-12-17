@@ -27,7 +27,7 @@ public class PointLogController {
 
 	@PostMapping("/list")
 	public Result list(Pageable pageable, @CurrentUser Member member) {
-		List<Map<String, Object>> maps = jdbcTemplate.queryForList("select id,memo,credit point,NOW()-createdDate seconds from pointlog where member_id=? order by createdDate desc limit ?,?;", 1, (pageable.getPageNumber() - 1) * pageable.getPageSize(), pageable.getPageSize());
+		List<Map<String, Object>> maps = jdbcTemplate.queryForList("select id,memo,credit point,UNIX_TIMESTAMP(NOW())-UNIX_TIMESTAMP(createdDate) seconds from pointlog where member_id=? order by createdDate desc limit ?,?;", member.getId(), (pageable.getPageNumber() - 1) * pageable.getPageSize(), pageable.getPageSize());
 
 		for (Map<String, Object> map : maps) {
 			Integer seconds = Integer.valueOf(map.get("seconds")+"");

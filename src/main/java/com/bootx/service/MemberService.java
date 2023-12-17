@@ -34,4 +34,5 @@ public interface MemberService extends BaseService<Member, Long> {
 	void lock(Member member);
 
 	void unLock(Member member);
+
 }

@@ -3,6 +3,7 @@ package com.bootx.service.impl;
 
 import com.bootx.dao.MemberDao;
 import com.bootx.entity.Member;
+import com.bootx.entity.MemberRank;
 import com.bootx.service.MemberService;
 import com.bootx.util.JWTUtils;
 import com.bootx.util.WebUtils;
@@ -15,6 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author black
@@ -72,4 +75,23 @@ public class MemberServiceImpl extends BaseServiceImpl<Member, Long> implements 
 		redisService.delete(Member.FAILED_LOGIN_ATTEMPTS_CACHE_NAME + ":" + member.getId());
 	}
 
+
+	@Override
+	public Member update(Member member) {
+		List<Map<String, Object>> maps = jdbcTemplate.queryForList("select id,point from memberrank where point>=? order by point limit 1;", member.getPoint());
+		// TODO 调整会员等级
+		if(!maps.isEmpty()){
+			try {
+				Long memberRankId = Long.valueOf(maps.getFirst().get("id") + "");
+
+			}catch (Exception e){
+
+			}
+		}
+
+
+
+
+		return super.update(member);
+	}
 }

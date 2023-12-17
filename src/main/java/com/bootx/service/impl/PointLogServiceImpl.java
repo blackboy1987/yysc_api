@@ -33,7 +33,7 @@ public class PointLogServiceImpl extends BaseServiceImpl<PointLog, Long> impleme
 		pointLog.setCredit(point);
 		pointLog.setMemo(memo);
 		pointLog.setAfterPoint(pointLog.getBeforePoint()+pointLog.getCredit());
-		return pointLog;
+		return super.save(pointLog);
 	}
 
 }

@@ -4,6 +4,7 @@ package com.bootx.controller.member;
 import com.bootx.common.Result;
 import com.bootx.controller.admin.BaseController;
 import com.bootx.entity.Member;
+import com.bootx.entity.MemberRank;
 import com.bootx.security.CurrentUser;
 import com.bootx.service.MemberService;
 import jakarta.annotation.Resource;
@@ -39,9 +40,9 @@ public class IndexController extends BaseController {
 
 		data.put("point",member.getPoint());
 		if(member.getMemberRank()!=null){
-			data.put("nextPoint",member.getMemberRank().getPoint());
+			data.put("nextPoint",jdbcTemplate.queryForObject("select point from memberrank where id>? order by id asc limit 1;",Long.class,member.getMemberRank().getId()));
 		}else{
-			data.put("nextPoint",12345);
+			data.put("nextPoint",0);
 		}
 		data.put("concernCount",jdbcTemplate.queryForObject("select count(id) from fan where member_id=?",Long.class,member.getId()));
 		data.put("fanCount",jdbcTemplate.queryForObject("select count(id) from fan where fan_id=?",Long.class,member.getId()));

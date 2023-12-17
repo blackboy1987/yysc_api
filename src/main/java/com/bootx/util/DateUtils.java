@@ -477,13 +477,13 @@ public class DateUtils {
     }
 
     public static String getDuration(Integer seconds) {
-        // 1天之内
-        if(seconds<60*60*24){
-            int hour = seconds/60*60;
-            return (hour+1)+"小时前";
+        int days = seconds/(60*60*24);
+        int hour = seconds/(60*60);
+        if(days>0){
+            return days+"天前";
         }
-        int days = seconds/60*60*24;
-        return days+"天前";
+        return hour+"小时前";
+
     }
 
     public static String formatDateInfo(Date date) {

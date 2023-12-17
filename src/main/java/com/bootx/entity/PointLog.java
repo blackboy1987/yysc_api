@@ -4,6 +4,9 @@ package com.bootx.entity;
 import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.persistence.*;
 
+/**
+ * @author black
+ */
 @Entity
 public class PointLog extends BaseEntity<Long> {
 
@@ -16,6 +19,10 @@ public class PointLog extends BaseEntity<Long> {
 
 	/**
 	 * 获取积分
+	 * 0: 签到奖励
+	 * 1：激励奖励
+	 * 2：软件打赏
+	 * 3：用户打赏
 	 */
 	@JsonView(BaseView.class)
 	@Column(nullable = false, updatable = false)
