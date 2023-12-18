@@ -1,10 +1,11 @@
 
 package com.bootx.service;
 
-import com.bootx.dao.MemberDao;
-import com.bootx.entity.Admin;
 import com.bootx.entity.Member;
 
+/**
+ * @author black
+ */
 public interface MemberService extends BaseService<Member, Long> {
 
 	/**
@@ -25,10 +26,13 @@ public interface MemberService extends BaseService<Member, Long> {
 	 */
 	Member findByUsername(String username);
 
+	boolean usernameUnique(Long id, String username);
+
 
 	Member getCurrent();
 
 	void lock(Member member);
 
 	void unLock(Member member);
+
 }
