@@ -64,11 +64,37 @@ public class TouGaoController extends BaseController {
 
 	@PostMapping("/init")
 	public Result init(HttpServletRequest request, @CurrentUser Member member) {
+		Map<String,Object> data = new HashMap<>();
 		// 渠道
+		List<String> quDaoList = new ArrayList<>();
+		quDaoList.add("官方版");
+		quDaoList.add("国际版");
+		quDaoList.add("测试版本");
+		quDaoList.add("汉化版");
+		data.put("quDaoList",quDaoList);
 		// 广告类型
+		List<String> adList = new ArrayList<>();
+		adList.add("无广告");
+		adList.add("少量广告");
+		adList.add("超过广告");
+		data.put("adList",adList);
 		// 付费模式
+		List<String> payList = new ArrayList<>();
+		payList.add("完全免费");
+		payList.add("会员制");
+		payList.add("没钱不给用");
+		data.put("payList",payList);
 		// 运营方式
+		List<String> operationType = new ArrayList<>();
+		operationType.add("企业开发");
+		operationType.add("独立开发");
+		data.put("operationType",operationType);
 		// 应用优点
+		List<String> featuresType = new ArrayList<>();
+		featuresType.add("白嫖");
+		featuresType.add("Material Design");
+		featuresType.add("神作");
+		data.put("featuresType",featuresType);
 		return Result.success();
 	}
 
