@@ -23,4 +23,6 @@ public interface SoftService extends BaseService<Soft, Long> {
     String getStatus(String status);
 
     List<Map<String, Object>> get(Pageable pageable, String orderBy, Long categoryId);
+
+    List<Map<String, Object>> search(String keywords, Pageable pageable);
 }

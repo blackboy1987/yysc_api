@@ -5,7 +5,8 @@ import com.bootx.common.Pageable;
 import com.bootx.common.Result;
 import com.bootx.entity.Member;
 import com.bootx.security.CurrentUser;
-import com.bootx.util.DateUtils;
+import com.bootx.service.FanService;
+import com.bootx.service.MemberService;
 import jakarta.annotation.Resource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,6 +27,12 @@ public class FanController {
 	@Resource
 	private JdbcTemplate jdbcTemplate;
 
+	@Resource
+	private FanService fanService;
+
+	@Resource
+	private MemberService memberService;
+
 	@PostMapping("/list")
 	public Result list(Pageable pageable, @CurrentUser Member member,Integer type) {
 		List<Map<String, Object>> maps = new ArrayList<>();
@@ -39,6 +46,18 @@ public class FanController {
 		}
 
 		return Result.success(maps);
+	}
+
+	/**
+	 * 关注
+	 * @param fanId
+	 * @param member
+	 * @return
+	 */
+	@PostMapping("/save")
+	public Result save(Long fanId, @CurrentUser Member member) {
+		fanService.create(member,memberService.find(fanId));
+		return Result.success();
 	}
 
 	/**

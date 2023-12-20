@@ -1,7 +1,11 @@
 
 package com.bootx.service;
 
+import com.bootx.common.Pageable;
 import com.bootx.entity.Member;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author black
@@ -35,4 +39,5 @@ public interface MemberService extends BaseService<Member, Long> {
 
 	void unLock(Member member);
 
+    List<Map<String,Object>> search(String keywords, Pageable pageable);
 }
