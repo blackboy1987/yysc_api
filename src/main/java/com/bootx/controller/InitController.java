@@ -46,9 +46,6 @@ public class InitController {
     @Resource
     private FanService fanService;
 
-    @Resource
-    private MemberRankService memberRankService;
-
     private static final ExecutorService executorService = Executors.newFixedThreadPool(10);
 
     @GetMapping
@@ -348,44 +345,5 @@ public class InitController {
             softService.update(soft);
             softExtService.create(softExt);
         });
-    }
-
-
-    @GetMapping("/fan")
-    public Result fan(Long start) {
-        for (Long j = 0L; j < 100000L; j++) {
-            Member member = memberService.find(j);
-            if(member!=null){
-                Integer index = 0;
-                Integer count = new Random().nextInt(50);
-                while (index<count){
-                    Long fanId = new Random().nextLong(1L,10000L);
-                    Member fan = memberService.find(fanId);
-                    if(fan !=null){
-                        executorService.execute(()->{
-                            fanService.create(member,fan);
-                        });
-                        index++;
-                    }
-                }
-            }
-        }
-
-        return Result.success();
-    }
-
-    @GetMapping("/memberRank")
-    public Result memberRank() {
-        List<MemberRank> memberRanks = memberRankService.findAll();
-        for (Long j = 0L; j < 100000L; j++) {
-            Member member = memberService.find(j);
-            int i = new Random().nextInt(memberRanks.size());
-            if(member!=null){
-                member.setMemberRank(memberRanks.get(i));
-                memberService.update(member);
-            }
-        }
-
-        return Result.success();
     }
 }

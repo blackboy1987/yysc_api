@@ -160,6 +160,21 @@ public class SoftServiceImpl extends BaseServiceImpl<Soft, Long> implements Soft
         return maps;
     }
 
+    @Override
+    public List<Map<String, Object>> search(String keywords, Pageable pageable) {
+        List<Map<String, Object>> maps = jdbcTemplate.queryForList("select versionName, id,downloads,logo,name,size,updateDate,score from soft where name like ? limit ?,?;", "%" + keywords + "%", (pageable.getPageNumber() - 1) * pageable.getPageSize(), pageable.getPageSize());
+        maps.forEach(item -> {
+            Long downloads = Long.valueOf(item.get("downloads") + "");
+            if (downloads >= 10000) {
+                item.put("memo", String.format("%.2f", downloads / 10000.0) + "万次下载");
+            } else {
+                item.put("memo", downloads + "次下载");
+            }
+            item.put("score", (item.get("score") + "").substring(0, 3));
+        });
+        return maps;
+    }
+
     private void initSoftExt(Soft soft, SoftPOJO softPOJO) {
         SoftExt softExt = new SoftExt();
         softExt.setAdType(softPOJO.getAdType0());
