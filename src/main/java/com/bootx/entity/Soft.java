@@ -208,8 +208,8 @@ public class Soft extends BaseEntity<Long> {
     private String packageName;
 
 
-
-
+    @ManyToMany(fetch = FetchType.LAZY)
+    private Set<SoftTag> softTags = new HashSet<>();
 
 
 
@@ -532,6 +532,14 @@ public class Soft extends BaseEntity<Long> {
 
     public void setMonthDonationIcon(Long monthDonationIcon) {
         this.monthDonationIcon = monthDonationIcon;
+    }
+
+    public Set<SoftTag> getSoftTags() {
+        return softTags;
+    }
+
+    public void setSoftTags(Set<SoftTag> softTags) {
+        this.softTags = softTags;
     }
 
     public interface DownloadView extends DefaultView{}
