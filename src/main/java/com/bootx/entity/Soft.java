@@ -138,10 +138,47 @@ public class Soft extends BaseEntity<Long> {
     private String versionCode;
 
     /**
+     * 今日投币人数
+     */
+    @Column(nullable = false)
+    private Long todayDonationMember;
+
+    /**
+     * 周投币人数
+     */
+    @Column(nullable = false)
+    private Long weekDonationMember;
+
+    /**
+     * 月投币人数
+     */
+    @Column(nullable = false)
+    private Long monthDonationMember;
+
+    /**
      * 投币人数
      */
     @Column(nullable = false)
     private Integer donationMember;
+
+    /**
+     * 今日投币数
+     */
+    @Column(nullable = false)
+    private Long todayDonationIcon;
+
+    /**
+     * 周投币数
+     */
+    @Column(nullable = false)
+    private Long weekDonationIcon;
+
+    /**
+     * 月投币数
+     */
+    @Column(nullable = false)
+    private Long monthDonationIcon;
+
     /**
      * 投币数
      */
@@ -449,6 +486,53 @@ public class Soft extends BaseEntity<Long> {
         this.packageName = packageName;
     }
 
+    public Long getTodayDonationMember() {
+        return todayDonationMember;
+    }
+
+    public void setTodayDonationMember(Long todayDonationMember) {
+        this.todayDonationMember = todayDonationMember;
+    }
+
+    public Long getWeekDonationMember() {
+        return weekDonationMember;
+    }
+
+    public void setWeekDonationMember(Long weekDonationMember) {
+        this.weekDonationMember = weekDonationMember;
+    }
+
+    public Long getMonthDonationMember() {
+        return monthDonationMember;
+    }
+
+    public void setMonthDonationMember(Long monthDonationMember) {
+        this.monthDonationMember = monthDonationMember;
+    }
+
+    public Long getTodayDonationIcon() {
+        return todayDonationIcon;
+    }
+
+    public void setTodayDonationIcon(Long todayDonationIcon) {
+        this.todayDonationIcon = todayDonationIcon;
+    }
+
+    public Long getWeekDonationIcon() {
+        return weekDonationIcon;
+    }
+
+    public void setWeekDonationIcon(Long weekDonationIcon) {
+        this.weekDonationIcon = weekDonationIcon;
+    }
+
+    public Long getMonthDonationIcon() {
+        return monthDonationIcon;
+    }
+
+    public void setMonthDonationIcon(Long monthDonationIcon) {
+        this.monthDonationIcon = monthDonationIcon;
+    }
 
     public interface DownloadView extends DefaultView{}
 }
