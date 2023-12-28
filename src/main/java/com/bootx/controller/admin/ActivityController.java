@@ -6,6 +6,7 @@ import com.bootx.common.Result;
 import com.bootx.entity.Activity;
 import com.bootx.entity.Admin;
 import com.bootx.entity.BaseEntity;
+import com.bootx.security.CurrentUser;
 import com.bootx.service.ActivityService;
 import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.annotation.Resource;
@@ -27,7 +28,7 @@ public class ActivityController extends BaseController{
      * 保存
      */
     @PostMapping("/save")
-    public Result save(Activity activity) {
+    public Result save(Activity activity, @CurrentUser Admin admin) {
         activityService.save(activity);
         return Result.success();
     }

@@ -110,6 +110,24 @@ public class Soft extends BaseEntity<Long> {
     private Date monthDownloadsDate;
 
     /**
+     * 今日评论
+     */
+    @Column(nullable = false)
+    private Long todayReviewCount;
+
+    /**
+     * 周评论
+     */
+    @Column(nullable = false)
+    private Long weekReviewCount;
+
+    /**
+     * 月评论
+     */
+    @Column(nullable = false)
+    private Long monthReviewCount;
+
+    /**
      * 评论数
      */
     private Integer reviewCount;
@@ -292,6 +310,30 @@ public class Soft extends BaseEntity<Long> {
 
     public void setMonthDownloadsDate(Date monthDownloadsDate) {
         this.monthDownloadsDate = monthDownloadsDate;
+    }
+
+    public Long getTodayReviewCount() {
+        return todayReviewCount;
+    }
+
+    public void setTodayReviewCount(Long todayReviewCount) {
+        this.todayReviewCount = todayReviewCount;
+    }
+
+    public Long getWeekReviewCount() {
+        return weekReviewCount;
+    }
+
+    public void setWeekReviewCount(Long weekReviewCount) {
+        this.weekReviewCount = weekReviewCount;
+    }
+
+    public Long getMonthReviewCount() {
+        return monthReviewCount;
+    }
+
+    public void setMonthReviewCount(Long monthReviewCount) {
+        this.monthReviewCount = monthReviewCount;
     }
 
     public Integer getReviewCount() {
