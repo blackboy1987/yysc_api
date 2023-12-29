@@ -49,22 +49,22 @@ public class SoftController extends BaseController{
      * 列表
      */
     @PostMapping("/list")
-    @Audit(action = "项目查询")
+    @Audit(action = "软件查询")
     @JsonView(BaseEntity.PageView.class)
     public Result list(Long categoryId, String name, Pageable pageable) {
         StringBuilder querySql = new StringBuilder();
         StringBuilder countSql = new StringBuilder();
-        querySql.append("select soft.id,soft.name,createdDate from soft,soft_categories where soft_categories.softs_id=soft.id");
+        querySql.append("select soft.id,soft.name,soft.createdDate,soft.logo,soft.status,member.username username from soft,soft_categories,member where soft.member_id=member.id and soft_categories.softs_id=soft.id");
         countSql.append("select count(soft.id) from soft,soft_categories where soft_categories.softs_id=soft.id");
         if(StringUtils.isNotBlank(name)){
-            querySql.append(" and name like '%").append(name).append("%'");
-            countSql.append(" and name like '%").append(name).append("%'");
+            querySql.append(" and soft.name like '%").append(name).append("%'");
+            countSql.append(" and soft.name like '%").append(name).append("%'");
         }
         if(categoryId!=null){
             querySql.append(" and soft_categories.categories_id=").append(categoryId);
             countSql.append(" and soft_categories.categories_id=").append(categoryId);
         }
-        querySql.append(" order by createdDate desc");
+        querySql.append(" order by soft.createdDate desc");
         querySql.append(" limit ?,?");
         List<Map<String, Object>> maps = jdbcTemplate.queryForList(querySql.toString(), (pageable.getPageNumber() - 1) * pageable.getPageSize(), pageable.getPageSize());
         Long count = jdbcTemplate.queryForObject(countSql.toString(),Long.class);
