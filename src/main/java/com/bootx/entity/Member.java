@@ -195,6 +195,9 @@ public class Member extends User {
     }
 
     public String getAvatar() {
+        if(StringUtils.isBlank(avatar)){
+            avatar = "https://bootx-tuchuang.oss-cn-hangzhou.aliyuncs.com/avatar/" + ((getId()==null?0:getId()) % 50) + ".png";
+        }
         return avatar;
     }
 
@@ -214,5 +217,13 @@ public class Member extends User {
     @Override
     public boolean isValidCredentials(Object credentials) {
         return credentials != null && StringUtils.equals(DigestUtils.md5Hex(credentials instanceof char[] ? String.valueOf((char[]) credentials) : String.valueOf(credentials)), getEncodedPassword());
+    }
+
+    @Transient
+    public String getMemberRankName() {
+        if(memberRank!=null){
+            return memberRank.getName();
+        }
+        return null;
     }
 }

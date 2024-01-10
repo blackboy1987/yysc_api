@@ -131,6 +131,9 @@ public class SoftController extends BaseController {
 		if(StringUtils.isBlank(soft.getDownloadUrl())){
 			return Result.error("暂无下载地址");
 		}
+		if(StringUtils.isBlank(soft.getVersionName())){
+			soft.setVersionName("未知");
+		}
 		softService.updateDownloads(id,1);
 
 		return Result.success(soft);

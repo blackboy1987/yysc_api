@@ -13,9 +13,15 @@ public class FanServiceImpl extends BaseServiceImpl<Fan,Long> implements FanServ
 
     @Override
     public void create(Member member, Member fan) {
-        Fan fan1 = new Fan();
-        fan1.setFan(fan);
-        fan1.setMember(member);
-        super.save(fan1);
+        if(member==null || fan == null){
+            return ;
+        }
+        Long l = jdbcTemplate.queryForObject("select count(fan.id) from fan where member_id=? and fan_id=?", Long.class, member.getId(), fan.getId());
+        if(l==null || l==0){
+            Fan fan1 = new Fan();
+            fan1.setFan(fan);
+            fan1.setMember(member);
+            super.save(fan1);
+        }
     }
 }
