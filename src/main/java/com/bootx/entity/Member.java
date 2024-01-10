@@ -11,6 +11,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.hibernate.validator.constraints.Length;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @author black
@@ -93,6 +95,9 @@ public class Member extends User {
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     private MemberRank memberRank;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    private Set<MemberTag> memberTags = new HashSet<>();
 
     /**
      * 获取用户名
@@ -217,6 +222,14 @@ public class Member extends User {
     @Override
     public boolean isValidCredentials(Object credentials) {
         return credentials != null && StringUtils.equals(DigestUtils.md5Hex(credentials instanceof char[] ? String.valueOf((char[]) credentials) : String.valueOf(credentials)), getEncodedPassword());
+    }
+
+    public Set<MemberTag> getMemberTags() {
+        return memberTags;
+    }
+
+    public void setMemberTags(Set<MemberTag> memberTags) {
+        this.memberTags = memberTags;
     }
 
     @Transient

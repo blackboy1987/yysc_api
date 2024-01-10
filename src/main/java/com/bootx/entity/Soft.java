@@ -110,6 +110,24 @@ public class Soft extends BaseEntity<Long> {
     private Date monthDownloadsDate;
 
     /**
+     * 今日评论
+     */
+    @Column(nullable = false)
+    private Long todayReviewCount;
+
+    /**
+     * 周评论
+     */
+    @Column(nullable = false)
+    private Long weekReviewCount;
+
+    /**
+     * 月评论
+     */
+    @Column(nullable = false)
+    private Long monthReviewCount;
+
+    /**
      * 评论数
      */
     private Integer reviewCount;
@@ -120,10 +138,47 @@ public class Soft extends BaseEntity<Long> {
     private String versionCode;
 
     /**
+     * 今日投币人数
+     */
+    @Column(nullable = false)
+    private Long todayDonationMember;
+
+    /**
+     * 周投币人数
+     */
+    @Column(nullable = false)
+    private Long weekDonationMember;
+
+    /**
+     * 月投币人数
+     */
+    @Column(nullable = false)
+    private Long monthDonationMember;
+
+    /**
      * 投币人数
      */
     @Column(nullable = false)
     private Integer donationMember;
+
+    /**
+     * 今日投币数
+     */
+    @Column(nullable = false)
+    private Long todayDonationIcon;
+
+    /**
+     * 周投币数
+     */
+    @Column(nullable = false)
+    private Long weekDonationIcon;
+
+    /**
+     * 月投币数
+     */
+    @Column(nullable = false)
+    private Long monthDonationIcon;
+
     /**
      * 投币数
      */
@@ -153,8 +208,8 @@ public class Soft extends BaseEntity<Long> {
     private String packageName;
 
 
-
-
+    @ManyToMany(fetch = FetchType.LAZY)
+    private Set<SoftTag> softTags = new HashSet<>();
 
 
 
@@ -294,6 +349,30 @@ public class Soft extends BaseEntity<Long> {
         this.monthDownloadsDate = monthDownloadsDate;
     }
 
+    public Long getTodayReviewCount() {
+        return todayReviewCount;
+    }
+
+    public void setTodayReviewCount(Long todayReviewCount) {
+        this.todayReviewCount = todayReviewCount;
+    }
+
+    public Long getWeekReviewCount() {
+        return weekReviewCount;
+    }
+
+    public void setWeekReviewCount(Long weekReviewCount) {
+        this.weekReviewCount = weekReviewCount;
+    }
+
+    public Long getMonthReviewCount() {
+        return monthReviewCount;
+    }
+
+    public void setMonthReviewCount(Long monthReviewCount) {
+        this.monthReviewCount = monthReviewCount;
+    }
+
     public Integer getReviewCount() {
         return reviewCount;
     }
@@ -407,6 +486,61 @@ public class Soft extends BaseEntity<Long> {
         this.packageName = packageName;
     }
 
+    public Long getTodayDonationMember() {
+        return todayDonationMember;
+    }
+
+    public void setTodayDonationMember(Long todayDonationMember) {
+        this.todayDonationMember = todayDonationMember;
+    }
+
+    public Long getWeekDonationMember() {
+        return weekDonationMember;
+    }
+
+    public void setWeekDonationMember(Long weekDonationMember) {
+        this.weekDonationMember = weekDonationMember;
+    }
+
+    public Long getMonthDonationMember() {
+        return monthDonationMember;
+    }
+
+    public void setMonthDonationMember(Long monthDonationMember) {
+        this.monthDonationMember = monthDonationMember;
+    }
+
+    public Long getTodayDonationIcon() {
+        return todayDonationIcon;
+    }
+
+    public void setTodayDonationIcon(Long todayDonationIcon) {
+        this.todayDonationIcon = todayDonationIcon;
+    }
+
+    public Long getWeekDonationIcon() {
+        return weekDonationIcon;
+    }
+
+    public void setWeekDonationIcon(Long weekDonationIcon) {
+        this.weekDonationIcon = weekDonationIcon;
+    }
+
+    public Long getMonthDonationIcon() {
+        return monthDonationIcon;
+    }
+
+    public void setMonthDonationIcon(Long monthDonationIcon) {
+        this.monthDonationIcon = monthDonationIcon;
+    }
+
+    public Set<SoftTag> getSoftTags() {
+        return softTags;
+    }
+
+    public void setSoftTags(Set<SoftTag> softTags) {
+        this.softTags = softTags;
+    }
 
     public interface DownloadView extends DefaultView{}
 }

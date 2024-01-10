@@ -87,6 +87,10 @@ public class SoftServiceImpl extends BaseServiceImpl<Soft, Long> implements Soft
 
     @Override
     public List<Map<String, Object>> get(Pageable pageable, String orderBy, Long categoryId) {
+        System.out.println(orderBy);
+
+
+
         List<Map<String, Object>> maps = new ArrayList<>();
         String fromSql = "from soft";
         if (categoryId != null && categoryId != 0) {
@@ -94,6 +98,7 @@ public class SoftServiceImpl extends BaseServiceImpl<Soft, Long> implements Soft
         }
         String pageQuery = "limit " + (pageable.getPageNumber() - 1) * pageable.getPageSize() + "," + pageable.getPageSize();
         if (StringUtils.equalsIgnoreCase("00", orderBy)) {
+            // 下载排行
             maps = jdbcTemplate.queryForList("select size, score,versionName, id, downloads,logo,name " + fromSql + " order by downloads desc " + pageQuery);
             maps.forEach(item -> {
                 Long downloads = Long.valueOf(item.get("downloads") + "");
@@ -105,12 +110,14 @@ public class SoftServiceImpl extends BaseServiceImpl<Soft, Long> implements Soft
                 item.put("score", (item.get("score") + "").substring(0, 3));
             });
         } else if (StringUtils.equalsIgnoreCase("01", orderBy)) {
+            // 评分排行
             maps = jdbcTemplate.queryForList("select id,reviewCount,score,logo,name,versionName,size " + fromSql + " order by score desc " + pageQuery);
             maps.forEach(item -> {
                 item.put("memo", "今日" + (item.get("reviewCount") == null ? 0 : item.get("reviewCount")) + "条评论");
                 item.put("score", (item.get("score") + "").substring(0, 3));
             });
         } else if (StringUtils.equalsIgnoreCase("2", orderBy)) {
+            // 随机
             maps = jdbcTemplate.queryForList("SELECT size, id,downloads,logo,name,score FROM soft WHERE id >= ((SELECT MAX(id) FROM soft)-(SELECT MIN(id) FROM soft)) * RAND() + (SELECT MIN(id) FROM soft) LIMIT 20");
             maps.forEach(item -> {
                 Long downloads = Long.valueOf(item.get("downloads") + "");
@@ -122,6 +129,7 @@ public class SoftServiceImpl extends BaseServiceImpl<Soft, Long> implements Soft
                 item.put("score", (item.get("score") + "").substring(0, 3));
             });
         } else if (StringUtils.equalsIgnoreCase("3", orderBy)) {
+            // 更新排行
             maps = jdbcTemplate.queryForList("select size, id, downloads,logo,name,score,versionName,updateDate " + fromSql + " order by updateDate desc " + pageQuery);
             maps.forEach(item -> {
                 Long downloads = Long.valueOf(item.get("downloads") + "");
