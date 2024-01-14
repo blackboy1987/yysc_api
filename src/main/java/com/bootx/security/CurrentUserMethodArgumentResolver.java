@@ -12,6 +12,9 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
+/**
+ * @author black
+ */
 public class CurrentUserMethodArgumentResolver implements HandlerMethodArgumentResolver {
 
 	@Resource

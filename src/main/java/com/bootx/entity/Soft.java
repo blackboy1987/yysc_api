@@ -8,6 +8,7 @@ import jakarta.validation.constraints.NotNull;
 
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Random;
 import java.util.Set;
 
 /**
@@ -543,4 +544,29 @@ public class Soft extends BaseEntity<Long> {
     }
 
     public interface DownloadView extends DefaultView{}
+    
+    
+    public void init(){
+        Random random = new Random();
+        this.setDownloads(random.nextLong(1000000));
+        this.setTodayDownloads(random.nextLong(1000000));
+        this.setWeekDownloads(random.nextLong(1000000));
+        this.setMonthDownloads(random.nextLong(1000000));
+        this.setTodayDownloadsDate(new Date());
+        this.setWeekDownloadsDate(new Date());
+        this.setMonthDownloadsDate(new Date());
+        this.setDonationIcon(0L);
+        this.setDonationMember(0);
+        this.setMonthDonationIcon(0L);
+        this.setMonthDonationMember(0L);
+        this.setWeekDonationIcon(0L);
+        this.setWeekDonationMember(0L);
+        this.setMonthReviewCount(0L);
+        this.setWeekReviewCount(0L);
+        this.setStatus(0);
+        this.setTodayDonationIcon(0L);
+        this.setTodayDonationMember(0L);
+        this.setTodayReviewCount(0L);
+        this.setScore(new Random().nextDouble(10));
+    }
 }

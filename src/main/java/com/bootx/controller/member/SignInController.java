@@ -1,6 +1,7 @@
 
 package com.bootx.controller.member;
 
+import com.bootx.common.Pageable;
 import com.bootx.common.Result;
 import com.bootx.controller.admin.BaseController;
 import com.bootx.entity.Member;
@@ -67,10 +68,18 @@ public class SignInController extends BaseController {
 		data.put("days",member.getContinuousSignInDays());
 		// 签到排名
 		data.put("rank",jdbcTemplate.queryForObject("select count(id) from signinlog where createdDate>=? and createdDate<?;",Integer.class,DateUtils.formatDateToString(new Date(),"yyyy-MM-dd 00:00:00"),DateUtils.formatDateToString(member.getSignInDate(),"yyyy-MM-dd H:mm:ss")));
-		data.put("list",jdbcTemplate.queryForList("select member.avatar,member.username,member.continuousSignInDays,DATE_FORMAT(signinlog.createdDate,'%Y-%m-%d %H:%i:%s') signDate from signinlog,member where member.id=signinlog.member_id and signinlog.createdDate>=? order by signinlog.createdDate desc",DateUtils.formatDateToString(new Date(),"yyyy-MM-dd 00:00:00")));
 		return Result.success(data);
 	}
-
+	/**
+	 * 签到记录
+	 * @param request
+	 * @param member
+	 * @return
+	 */
+	@PostMapping("/list")
+	public Result list(HttpServletRequest request, @CurrentUser Member member, Pageable pageable) {
+		return Result.success(jdbcTemplate.queryForList("select member.avatar,member.username,member.continuousSignInDays,DATE_FORMAT(signinlog.createdDate,'%Y-%m-%d %H:%i:%s') signDate from signinlog,member where member.id=signinlog.member_id and signinlog.createdDate>=? order by signinlog.createdDate desc limit ?,?",DateUtils.formatDateToString(new Date(),"yyyy-MM-dd 00:00:00"),(pageable.getPageNumber()-1)*pageable.getPageSize(),pageable.getPageSize()));
+	}
 	/**
 	 * 判断是否签到
 	 * @param request

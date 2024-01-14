@@ -50,12 +50,14 @@ public class MemberServiceImpl extends BaseServiceImpl<Member, Long> implements 
 			HttpServletRequest request = WebUtils.getRequest();
             assert request != null;
 			String token = request.getHeader("token");
+			System.out.println("current:"+token);
 			Claims claims = JWTUtils.parseToken(token);
             assert claims != null;
             String id = claims.getId();
 			return super.find(Long.valueOf(id));
 		}catch (Exception e){
-			return find(1L);
+			e.printStackTrace();
+			return null;
 		}
 	}
 
@@ -116,4 +118,24 @@ public class MemberServiceImpl extends BaseServiceImpl<Member, Long> implements 
 
 		return super.update(member);
 	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public boolean emailExists(String email) {
+		return memberDao.exists("email", StringUtils.lowerCase(email));
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public boolean emailUnique(Long id, String email) {
+		return memberDao.unique(id, "email", StringUtils.lowerCase(email));
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public Member findByEmail(String email) {
+		return memberDao.find("email", StringUtils.lowerCase(email));
+	}
+
+
 }

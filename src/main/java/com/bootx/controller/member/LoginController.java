@@ -11,6 +11,7 @@ import com.bootx.util.IPUtils;
 import com.bootx.util.JWTUtils;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -52,6 +53,9 @@ public class LoginController{
 		member.setLastLoginIp(ip);
 		member.setLockDate(null);
 		member.setIsLocked(false);
+		if(StringUtils.isBlank(member.getEmail())){
+			member.setEmail(member.getUsername()+"@qq.com");
+		}
 		memberService.update(member);
 		memberService.unLock(member);
 

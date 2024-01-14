@@ -32,6 +32,34 @@ public interface MemberService extends BaseService<Member, Long> {
 
 	boolean usernameUnique(Long id, String username);
 
+	/**
+	 * 判断E-mail是否存在
+	 *
+	 * @param email
+	 *            E-mail(忽略大小写)
+	 * @return E-mail是否存在
+	 */
+	boolean emailExists(String email);
+
+	/**
+	 * 判断E-mail是否唯一
+	 *
+	 * @param id
+	 *            ID
+	 * @param email
+	 *            E-mail(忽略大小写)
+	 * @return E-mail是否唯一
+	 */
+	boolean emailUnique(Long id, String email);
+
+	/**
+	 * 根据E-mail查找会员
+	 *
+	 * @param email
+	 *            E-mail(忽略大小写)
+	 * @return 会员，若不存在则返回null
+	 */
+	Member findByEmail(String email);
 
 	Member getCurrent();
 

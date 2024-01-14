@@ -2,6 +2,7 @@
 package com.bootx.service;
 
 import com.bootx.common.Pageable;
+import com.bootx.entity.Category;
 import com.bootx.entity.Member;
 import com.bootx.entity.Soft;
 import com.bootx.pojo.SoftPOJO;
@@ -25,4 +26,7 @@ public interface SoftService extends BaseService<Soft, Long> {
     List<Map<String, Object>> get(Pageable pageable, String orderBy, Long categoryId);
 
     List<Map<String, Object>> search(String keywords, Pageable pageable);
+
+    void load(Soft soft);
+    void load(Category category);
 }

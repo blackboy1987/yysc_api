@@ -4,6 +4,9 @@ import com.bootx.common.Pageable;
 import com.bootx.dao.*;
 import com.bootx.entity.*;
 import com.bootx.pojo.SoftPOJO;
+import com.bootx.service.SoftExtService;
+import com.bootx.service.SoftImageService;
+import com.bootx.service.SoftInfoService;
 import com.bootx.service.SoftService;
 import com.bootx.util.DateUtils;
 import com.bootx.util.ImageUtils;
@@ -11,9 +14,14 @@ import com.bootx.util.UploadUtils;
 import jakarta.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.net.URL;
 import java.util.*;
 
 @Service
@@ -26,11 +34,11 @@ public class SoftServiceImpl extends BaseServiceImpl<Soft, Long> implements Soft
     private CategoryDao categoryDao;
 
     @Resource
-    private SoftExtDao softExtDao;
+    private SoftInfoService softInfoService;
     @Resource
-    private SoftImageDao softImageDao;
+    private SoftExtService softExtService;
     @Resource
-    private SoftInfoDao softInfoDao;
+    private SoftImageService softImageService;
 
     @Override
     public Soft findByUrl(String href) {
@@ -183,7 +191,67 @@ public class SoftServiceImpl extends BaseServiceImpl<Soft, Long> implements Soft
         return maps;
     }
 
+    @Override
+    public void load(Soft soft) {
+        if(soft!=null){
+            String url = "https://m.shouji.com.cn" + soft.getUrl();
+            try {
+                Document parse = Jsoup.parse(new URL(url).openStream(), "utf-8", url);
+                // 基本信息
+                /**
+                 * <div id="infocont" class="info">
+                 *  <span class="tx"><img src="https://img.ocn187.com/simg/20200306/2020030603360525.png" alt="销服一线通app手机版 1.5.7"></span>
+                 *  <h1 class="bt">销服一线通app手机版 1.5.7</h1>
+                 *  <div class="txt">2022-3-28 9:21:38更新</div>
+                 *  <div class="txt2">提高你的办公效率。</div>
+                 *  <div class="btn topdown"><a href="http://gyxzliu2.gda086.com/gx2/19/xfyxt1076513.apk" title="下载销服一线通app手机版 1.5.7" rel="nofollow">立即下载</a></div>
+                 * </div>
+                 */
+                Element info_cent = parse.getElementById("infocont");
+                Element first = info_cent.getElementsByTag("img").first();
+                String logo = first.attr("href");
+                String name = info_cent.getElementsByTag("h1").first().text();
+                String updateTime = info_cent.getElementsByClass("txt").first().text().replace("更新","");
+                String memo = info_cent.getElementsByClass("txt2").first().text().replace("更新","");
+                String downloadUrl = info_cent.getElementsByTag("a").last().attr("href");
+                soft.setDownloadUrl(downloadUrl);
+                soft.setUpdateDate(updateTime);
+                soft.setLogo(logo);
+                soft.setName(name);
+                super.update(soft);
+
+                SoftPOJO softPOJO = new SoftPOJO();
+                softPOJO.setMemo(memo);
+                Element first2 = parse.getElementsByClass("txtcont").first();
+                softPOJO.setUpdatedContent(first2.html());
+                initSoftInfo(soft,softPOJO);
+
+                // 图片
+                Element first1 = parse.getElementsByClass("img_item Qimgs").first();
+                Elements imgs = first1.getElementsByTag("img");
+                List<String> urls = new ArrayList<>();
+                imgs.forEach(item->{
+                    String href = item.attr("href");
+                    urls.add(href);
+                });
+                softPOJO.setUrls(StringUtils.join(urls,","));
+                initSoftImage(soft,softPOJO);
+
+
+
+
+            } catch (Exception ignored) {
+            }
+        }
+    }
+
+    @Override
+    public void load(Category category) {
+
+    }
+
     private void initSoftExt(Soft soft, SoftPOJO softPOJO) {
+        softExtService.remove(soft);
         SoftExt softExt = new SoftExt();
         softExt.setAdType(softPOJO.getAdType0());
         softExt.setPaidType(softPOJO.getAdType1());
@@ -191,10 +259,11 @@ public class SoftServiceImpl extends BaseServiceImpl<Soft, Long> implements Soft
         softExt.setFeaturesType(softPOJO.getAdType3());
         softExt.setSoft(soft);
         soft.setSoftExt(softExt);
-        softExtDao.persist(softExt);
+        softExtService.save(softExt);
     }
 
     private void initSoftInfo(Soft soft, SoftPOJO softPOJO) {
+        softInfoService.remove(soft);
         SoftInfo softInfo = new SoftInfo();
         softInfo.setIntroduce(softPOJO.getIntroduce());
         softInfo.setMemo(softPOJO.getMemo());
@@ -202,10 +271,11 @@ public class SoftServiceImpl extends BaseServiceImpl<Soft, Long> implements Soft
 
 
         softInfo.setSoft(soft);
-        softInfoDao.persist(softInfo);
+        softInfoService.save(softInfo);
     }
 
     private void initSoftImage(Soft soft, SoftPOJO softPOJO) {
+        softImageService.remove(soft);
         String urls = softPOJO.getUrls();
         String[] split = urls.split(",");
         for (int i = 0; i < split.length; i++) {
@@ -215,7 +285,7 @@ public class SoftServiceImpl extends BaseServiceImpl<Soft, Long> implements Soft
             softImage.setStatus(0);
             softImage.setUrl(split[i]);
             softImage.setSoft(soft);
-            softImageDao.persist(softImage);
+            softImageService.save(softImage);
         }
     }
 

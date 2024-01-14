@@ -46,7 +46,7 @@ public class HomeController extends BaseController {
 		Pageable pageable = new Pageable();
 		Map<String,Object> data = new HashMap<>();
 
-		String s = redisService.get(cacheKey);
+		String s = redisService.get(cacheKey+"abc");
 		try {
 			data = JsonUtils.toObject(s, new TypeReference<Map<String, Object>>() {
 			});

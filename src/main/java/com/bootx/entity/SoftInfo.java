@@ -3,6 +3,7 @@ package com.bootx.entity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.persistence.*;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * @author black
@@ -47,6 +48,9 @@ public class SoftInfo extends BaseEntity<Long> {
     }
 
     public String getMemo() {
+        if(StringUtils.isBlank(memo)){
+            return "";
+        }
         return memo;
     }
 
@@ -55,6 +59,9 @@ public class SoftInfo extends BaseEntity<Long> {
     }
 
     public String getIntroduce() {
+        if(StringUtils.isBlank(introduce)){
+            return "";
+        }
         return introduce;
     }
 
@@ -63,6 +70,9 @@ public class SoftInfo extends BaseEntity<Long> {
     }
 
     public String getUpdatedContent() {
+        if(StringUtils.isBlank(updatedContent)){
+            return "";
+        }
         return updatedContent;
     }
 

@@ -8,6 +8,7 @@ import com.bootx.controller.admin.BaseController;
 import com.bootx.entity.BaseEntity;
 import com.bootx.entity.Member;
 import com.bootx.entity.Soft;
+import com.bootx.entity.SoftImage;
 import com.bootx.security.CurrentUser;
 import com.bootx.service.RedisService;
 import com.bootx.service.SoftService;
@@ -20,10 +21,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -82,28 +80,46 @@ public class SoftController extends BaseController {
 
 	@PostMapping("/detail")
 	public Result detail(Long id) {
-		Map<String, Object> data = jdbcTemplate.queryForMap("select versionCode,versionName,id,donationMember,donationIcon,reviewCount, fullName, score,size,downloads,name,logo,updateDate from soft where id=?", id);
-		try {
-			data.putAll(jdbcTemplate.queryForMap("select introduce,memo,updatedContent from softinfo where soft_id=?",id));
-		}catch (Exception e){
+		Map<String,Object> data = new HashMap<>();
+		Soft soft = softService.find(id);
+		if(soft.getMember()!=null){
+			data.put("author",soft.getMember().getUsername());
+			data.put("avatar",soft.getMember().getAvatar());
+		}
+		data.put("versionCode",soft.getVersionCode());
+		data.put("versionName",soft.getVersionName());
+		data.put("id",id);
+		data.put("donationMember",soft.getDonationMember());
+		data.put("donationIcon",soft.getDonationIcon());
+		data.put("reviewCount",soft.getReviewCount());
+		data.put("fullName",soft.getFullName());
+		data.put("score",String.format("%.2f", soft.getScore()));
+		data.put("name",soft.getName());
+		data.put("logo",soft.getLogo());
+		data.put("size",soft.getSize());
+		data.put("updateDate",soft.getUpdateDate());
+
+		if(soft.getSoftInfo()!=null){
+			data.put("introduce",soft.getSoftInfo().getIntroduce());
+			data.put("memo",soft.getSoftInfo().getMemo());
+			data.put("updatedContent",soft.getSoftInfo().getUpdatedContent());
+		}else {
 			data.put("introduce","");
 			data.put("memo","");
 			data.put("updatedContent","");
 		}
-		List<Map<String, Object>> images = jdbcTemplate.queryForList("select url from softimage where soft_id=? and status=1;", id);
-		data.put("score",(data.get("score")+"").substring(0,3));
-
-		Long downloads = Long.valueOf(data.get("downloads") + "");
-		if(downloads>=10000){
-			data.put("downloads",String.format("%.2f",downloads/10000.0)+"万");
+		if(soft.getSoftImages()!=null){
+			data.put("images",soft.getSoftImages().stream().map(SoftImage::getUrl).collect(Collectors.toList()));
 		}else{
-			data.put("downloads",downloads+"次下载");
+			data.put("images",Collections.emptyList());
 		}
-		List<String> imageList = new ArrayList<>();
-		images.forEach(item->{
-			imageList.add(item.get("url")+"");
-		});
-		data.put("images",imageList);
+
+		if(soft.getDownloads()>=10000){
+			data.put("downloads",String.format("%.2f",soft.getDownloads()/10000.0)+"万");
+		}else{
+			data.put("downloads",soft.getDownloads()+"次下载");
+		}
+		// 获取作者信息
 
 		return Result.success(data);
 	}
@@ -132,6 +148,12 @@ public class SoftController extends BaseController {
 			soft.setVersionName("未知");
 		}
 		if(StringUtils.isBlank(soft.getDownloadUrl())){
+			return Result.error("暂无下载地址");
+		}
+		if(!StringUtils.startsWith(soft.getDownloadUrl(),"http")){
+			return Result.error("暂无下载地址");
+		}
+		if(!StringUtils.endsWith(soft.getDownloadUrl(),"apk")){
 			return Result.error("暂无下载地址");
 		}
 		if(StringUtils.isBlank(soft.getVersionName())){

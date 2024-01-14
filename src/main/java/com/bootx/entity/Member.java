@@ -2,10 +2,7 @@ package com.bootx.entity;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.*;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.validator.constraints.Length;
@@ -45,6 +42,15 @@ public class Member extends User {
     private String password;
 
     /**
+     * E-mail
+     */
+    @NotEmpty
+    @Email
+    @Length(max = 200)
+    @Column(nullable = false)
+    private String email;
+
+    /**
      * 加密密码
      */
     @Column(nullable = false)
@@ -54,12 +60,10 @@ public class Member extends User {
      * 积分
      */
     @NotNull
-    @Min(0)
     @Column(nullable = false)
     @JsonView({PageView.class})
     private Long point;
     @NotNull
-    @Min(0)
     @Column(nullable = false)
     @JsonView({PageView.class})
     private Long remainPoint;
@@ -98,6 +102,12 @@ public class Member extends User {
 
     @ManyToMany(fetch = FetchType.LAZY)
     private Set<MemberTag> memberTags = new HashSet<>();
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Member parent;
+
+    @OneToMany(mappedBy = "parent",fetch = FetchType.LAZY)
+    private Set<Member> children = new HashSet<>();
 
     /**
      * 获取用户名
@@ -138,6 +148,14 @@ public class Member extends User {
         if (password != null) {
             setEncodedPassword(DigestUtils.md5Hex(password));
         }
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     /**
@@ -230,6 +248,22 @@ public class Member extends User {
 
     public void setMemberTags(Set<MemberTag> memberTags) {
         this.memberTags = memberTags;
+    }
+
+    public Member getParent() {
+        return parent;
+    }
+
+    public void setParent(Member parent) {
+        this.parent = parent;
+    }
+
+    public Set<Member> getChildren() {
+        return children;
+    }
+
+    public void setChildren(Set<Member> children) {
+        this.children = children;
     }
 
     @Transient
