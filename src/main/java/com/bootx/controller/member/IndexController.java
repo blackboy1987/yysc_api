@@ -29,10 +29,12 @@ public class IndexController extends BaseController {
 
 	@PostMapping("/currentUser")
 	public Result currentUser(@CurrentUser Member member) {
+		if(member==null){
+			return Result.error("请先登录");
+		}
 		Map<String,Object> data = new HashMap<>();
 		data.put("username",member.getUsername());
 		data.put("id",member.getId());
-		//
 		if(StringUtils.isNotBlank(member.getAvatar())){
 			data.put("avatar",member.getAvatar());
 		}else{

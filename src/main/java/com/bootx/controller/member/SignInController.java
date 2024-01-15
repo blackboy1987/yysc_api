@@ -41,6 +41,9 @@ public class SignInController extends BaseController {
 
 	@PostMapping
 	public Result index(HttpServletRequest request, @CurrentUser Member member) {
+		if(member==null){
+			return Result.error("请先登录");
+		}
 		Map<String,Object> data = new HashMap<>();
 		data.put("continuousSignInDays",0);
 		data.put("rank",0);
