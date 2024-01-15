@@ -27,8 +27,6 @@ public class Member extends User {
      * 用户名
      */
     @NotEmpty(groups = Save.class)
-    @Length(min = 4, max = 20)
-    @Pattern.List({ @Pattern(regexp = "^[0-9a-zA-Z_\\u4e00-\\u9fa5]+$"), @Pattern(regexp = "^.*[^\\d].*$") })
     @Column(nullable = false, updatable = false,unique = true)
     @JsonView({PageView.class})
     private String username;
