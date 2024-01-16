@@ -1,7 +1,13 @@
 package com.bootx.dao.impl;
 
+import com.bootx.common.Page;
+import com.bootx.common.Pageable;
 import com.bootx.dao.SignInLogDao;
+import com.bootx.entity.Member;
 import com.bootx.entity.SignInLog;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Root;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -9,4 +15,16 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public class SignInLogDaoImpl extends BaseDaoImpl<SignInLog,Long> implements SignInLogDao {
+    @Override
+    public Page<SignInLog> findPage(Pageable pageable, Member member) {
+        if (member == null) {
+            return Page.emptyPage(pageable);
+        }
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<SignInLog> criteriaQuery = criteriaBuilder.createQuery(SignInLog.class);
+        Root<SignInLog> root = criteriaQuery.from(SignInLog.class);
+        criteriaQuery.select(root);
+        criteriaQuery.where(criteriaBuilder.equal(root.get("member"), member));
+        return super.findPage(criteriaQuery, pageable);
+    }
 }

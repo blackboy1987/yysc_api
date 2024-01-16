@@ -1,11 +1,12 @@
 
 package com.bootx.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.ManyToOne;
+import com.fasterxml.jackson.annotation.JsonView;
+import jakarta.persistence.*;
 
+/**
+ * @author black
+ */
 @Entity
 public class SignInLog extends BaseEntity<Long> {
 
@@ -13,6 +14,7 @@ public class SignInLog extends BaseEntity<Long> {
 	 * IP
 	 */
 	@Column(nullable = false, updatable = false)
+	@JsonView({PageView.class})
 	private String ip;
 
 	/**
@@ -21,6 +23,7 @@ public class SignInLog extends BaseEntity<Long> {
 	@ManyToOne(fetch = FetchType.LAZY)
 	private Member member;
 
+	@JsonView({PageView.class})
 	private Long rewardPoints;
 
 	public String getIp() {
@@ -45,5 +48,23 @@ public class SignInLog extends BaseEntity<Long> {
 
 	public void setRewardPoints(Long rewardPoints) {
 		this.rewardPoints = rewardPoints;
+	}
+
+	@Transient
+	@JsonView({PageView.class})
+	public String getUsername(){
+		if(member!=null){
+			return member.getUsername();
+		}
+		return null;
+	}
+
+	@Transient
+	@JsonView({PageView.class})
+	public Long getMemberId(){
+		if(member!=null){
+			return member.getId();
+		}
+		return null;
 	}
 }
