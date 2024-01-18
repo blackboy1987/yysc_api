@@ -9,6 +9,9 @@ import org.springframework.util.Assert;
 
 import java.math.BigDecimal;
 
+/**
+ * @author black
+ */
 @Repository
 public class MemberRankDaoImpl extends BaseDaoImpl<MemberRank, Long> implements MemberRankDao {
 

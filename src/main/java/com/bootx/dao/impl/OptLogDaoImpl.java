@@ -5,6 +5,9 @@ import com.bootx.dao.OptLogDao;
 import com.bootx.entity.OptLog;
 import org.springframework.stereotype.Repository;
 
+/**
+ * @author black
+ */
 @Repository
 public class OptLogDaoImpl extends BaseDaoImpl<OptLog, Long> implements OptLogDao {
 

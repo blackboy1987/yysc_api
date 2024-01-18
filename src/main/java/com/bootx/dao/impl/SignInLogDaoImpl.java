@@ -7,6 +7,7 @@ import com.bootx.entity.Member;
 import com.bootx.entity.SignInLog;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import org.springframework.stereotype.Repository;
 
@@ -23,8 +24,10 @@ public class SignInLogDaoImpl extends BaseDaoImpl<SignInLog,Long> implements Sig
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<SignInLog> criteriaQuery = criteriaBuilder.createQuery(SignInLog.class);
         Root<SignInLog> root = criteriaQuery.from(SignInLog.class);
+        Predicate restrictions = criteriaBuilder.conjunction();
+        restrictions = criteriaBuilder.and(restrictions, criteriaBuilder.equal(root.get("member"), member));
         criteriaQuery.select(root);
-        criteriaQuery.where(criteriaBuilder.equal(root.get("member"), member));
+        criteriaQuery.where(restrictions);
         return super.findPage(criteriaQuery, pageable);
     }
 }

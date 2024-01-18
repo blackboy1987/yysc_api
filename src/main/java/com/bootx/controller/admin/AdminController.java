@@ -6,8 +6,9 @@ import com.bootx.common.Result;
 import com.bootx.entity.Admin;
 import com.bootx.service.AdminService;
 import jakarta.annotation.Resource;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * @author black
@@ -18,14 +19,6 @@ public class AdminController extends BaseController {
 
 	@Resource
 	private AdminService adminService;
-
-	/**
-	 * 检查用户名是否存在
-	 */
-	@GetMapping("/check_username")
-	public @ResponseBody boolean checkUsername(String username) {
-		return StringUtils.isNotEmpty(username) && !adminService.usernameExists(username);
-	}
 
 
 	/**
@@ -49,7 +42,7 @@ public class AdminController extends BaseController {
 	/**
 	 * 列表
 	 */
-	@GetMapping("/list")
+	@PostMapping("/list")
 	public Result list(Pageable pageable) {
 		return Result.success(adminService.findPage(pageable));
 	}

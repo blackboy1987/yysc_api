@@ -14,6 +14,9 @@ import org.springframework.util.Assert;
 
 import java.util.List;
 
+/**
+ * @author black
+ */
 @Repository
 public class ReviewDaoImpl extends BaseDaoImpl<Review, Long> implements ReviewDao {
 

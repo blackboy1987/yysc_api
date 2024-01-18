@@ -535,11 +535,10 @@ public abstract class BaseDaoImpl<T extends BaseEntity<ID>, ID extends Serializa
 		CriteriaQuery<T> criteriaQuery = criteriaBuilder.createQuery(criteriaQuery1.getResultType());
 		Root<T> root = criteriaQuery.from(criteriaQuery1.getResultType());
 
-
+		System.out.println(criteriaQuery.getRestriction() != null);
 		Predicate restrictions = criteriaQuery.getRestriction() != null ? criteriaQuery1.getRestriction() : criteriaBuilder.conjunction();
 		restrictions = criteriaBuilder.and(restrictions, toPredicate(root, filters));
 		criteriaQuery.where(restrictions);
-
 		CriteriaQuery<Long> countCriteriaQuery = criteriaBuilder.createQuery(Long.class);
 		copyCriteriaWithoutSelectionAndOrder(criteriaQuery, countCriteriaQuery);
 
