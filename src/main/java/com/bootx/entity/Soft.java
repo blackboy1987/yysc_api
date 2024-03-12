@@ -1,5 +1,7 @@
 package com.bootx.entity;
 
+import com.bootx.common.BaseAttributeConverter;
+import com.bootx.pojo.SoftAttr;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.persistence.*;
@@ -7,10 +9,7 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author black
@@ -21,6 +20,10 @@ public class Soft extends BaseEntity<Long> {
 
     @JsonView({PageView.class,DownloadView.class})
     private String name;
+
+    private String appName;
+
+    private String subTitle;
 
     /**
      * 渠道
@@ -252,7 +255,9 @@ public class Soft extends BaseEntity<Long> {
     @Column(columnDefinition = "longtext")
     private String updatedContent;
 
-
+    @Column(length = 1000)
+    @Convert(converter = SoftAttrConverter.class)
+    private List<SoftAttr> softAttrs = new ArrayList<>();
 
     public String getName() {
         return name;
@@ -260,6 +265,22 @@ public class Soft extends BaseEntity<Long> {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getAppName() {
+        return appName;
+    }
+
+    public void setAppName(String appName) {
+        this.appName = appName;
+    }
+
+    public String getSubTitle() {
+        return subTitle;
+    }
+
+    public void setSubTitle(String subTitle) {
+        this.subTitle = subTitle;
     }
 
     public String getUrl() {
@@ -599,6 +620,14 @@ public class Soft extends BaseEntity<Long> {
         this.featuresType = featuresType;
     }
 
+    public List<SoftAttr> getSoftAttrs() {
+        return softAttrs;
+    }
+
+    public void setSoftAttrs(List<SoftAttr> softAttrs) {
+        this.softAttrs = softAttrs;
+    }
+
     public String getMemo() {
         if(StringUtils.isBlank(memo)){
             return "";
@@ -633,6 +662,9 @@ public class Soft extends BaseEntity<Long> {
     }
 
     public interface DownloadView extends DefaultView{}
+
+    @Converter
+    public static class SoftAttrConverter extends BaseAttributeConverter<List<SoftAttr>>{}
     
     
     public void init(){

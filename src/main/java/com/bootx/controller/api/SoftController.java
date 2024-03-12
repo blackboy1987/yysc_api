@@ -37,14 +37,6 @@ public class SoftController extends BaseController {
 	@Resource
 	private SoftService softService;
 
-	@PostMapping("/list")
-	@JsonView(BaseEntity.PageView.class)
-	public Result list(Pageable pageable,Long categoryId) {
-		List<Map<String, Object>> maps = jdbcTemplate.queryForList("select soft.id,soft.name,soft.logo from soft_categories,soft where softs_id=soft.id and categories_id=? limit ?,?;", categoryId, (pageable.getPageNumber() - 1) * pageable.getPageSize(), pageable.getPageSize());
-
-		return Result.success();
-	}
-
 	/**
 	 * orderBy
 	 *  0开头：今日
@@ -78,44 +70,7 @@ public class SoftController extends BaseController {
 		return Result.success(maps);
 	}
 
-	@PostMapping("/detail")
-	public Result detail(Long id) {
-		Map<String,Object> data = new HashMap<>();
-		Soft soft = softService.find(id);
-		if(soft.getMember()!=null){
-			data.put("author",soft.getMember().getUsername());
-			data.put("avatar",soft.getMember().getAvatar());
-		}
-		data.put("versionCode",soft.getVersionCode());
-		data.put("versionName",soft.getVersionName());
-		data.put("id",id);
-		data.put("donationMember",soft.getDonationMember());
-		data.put("donationIcon",soft.getDonationIcon());
-		data.put("reviewCount",soft.getReviewCount());
-		data.put("fullName",soft.getFullName());
-		data.put("score",String.format("%.2f", soft.getScore()));
-		data.put("name",soft.getName());
-		data.put("logo",soft.getLogo());
-		data.put("size",soft.getSize());
-		data.put("updateDate",soft.getUpdateDate());
-		data.put("introduce",soft.getIntroduce());
-		data.put("memo",soft.getMemo());
-		data.put("updatedContent",soft.getUpdatedContent());
-		if(soft.getSoftImages()!=null){
-			data.put("images",soft.getSoftImages().stream().map(SoftImage::getUrl).collect(Collectors.toList()));
-		}else{
-			data.put("images",Collections.emptyList());
-		}
 
-		if(soft.getDownloads()>=10000){
-			data.put("downloads",String.format("%.2f",soft.getDownloads()/10000.0)+"万");
-		}else{
-			data.put("downloads",soft.getDownloads()+"次下载");
-		}
-		// 获取作者信息
-
-		return Result.success(data);
-	}
 
 
 	@PostMapping("/more")
@@ -155,5 +110,16 @@ public class SoftController extends BaseController {
 		softService.updateDownloads(id,1);
 
 		return Result.success(soft);
+	}
+
+	@PostMapping("/list")
+	public Result list(Pageable pageable,Long categoryId) {
+		return Result.success(softService.list(pageable,categoryId));
+	}
+
+	@PostMapping("/detail")
+	public Result detail(Long id) {
+
+		return Result.success(softService.detail(id));
 	}
 }

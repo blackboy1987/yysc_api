@@ -3,6 +3,7 @@ package com.bootx.job;
 import com.bootx.entity.Category;
 import com.bootx.entity.Member;
 import com.bootx.entity.Soft;
+import com.bootx.entity.SoftImage;
 import com.bootx.service.CategoryService;
 import com.bootx.service.MemberService;
 import com.bootx.service.SoftService;
@@ -13,11 +14,16 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 
 import java.net.URL;
 import java.util.List;
+import java.util.Map;
 
+/**
+ * @author black
+ */
 @Configuration
 public class SoftJob {
 
@@ -26,6 +32,9 @@ public class SoftJob {
 
     @Resource
     private SoftService softService;
+
+    @Resource
+    private JdbcTemplate jdbcTemplate;
 
     /**
      * 分类定时器
@@ -54,6 +63,36 @@ public class SoftJob {
                     break;
                 }
             }
+        }
+    }
+
+    /**
+     * 可以完善如下属性
+     *  setAppName
+     *  setPackageName
+     *  setFullName
+     *  setUpdateDate
+     *  setSubTitle
+     *  setDownloadUrl
+     *  setSoftImages
+     *  setMemo
+     *  setSize
+     *  setVersionName
+     *  setScore
+     *  setAdType
+     *  setOperationType
+     *  setFeaturesType
+     *  setSoftAttrs
+     */
+    @Scheduled(fixedDelay = 1000*5)
+    public void softDetail(){
+        List<Map<String, Object>> maps = jdbcTemplate.queryForList("select id, url from soft where memo is null limit 10");
+        for (Map<String, Object> map : maps) {
+            String id = map.get("id") + "";
+            Soft soft = softService.find(Long.valueOf(id));
+            ShouJiUtils.mobileDetail(soft);
+            ShouJiUtils.pcDetail(soft);
+            softService.update(soft);
         }
     }
 }

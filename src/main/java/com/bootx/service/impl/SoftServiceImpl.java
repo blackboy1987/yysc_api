@@ -13,8 +13,12 @@ import com.bootx.service.SoftImageService;
 import com.bootx.service.SoftService;
 import com.bootx.util.DateUtils;
 import com.bootx.util.ImageUtils;
+import com.bootx.util.JsonUtils;
 import com.bootx.util.UploadUtils;
+import com.fasterxml.jackson.core.type.TypeReference;
+import freemarker.cache.SoftCacheStorage;
 import jakarta.annotation.Resource;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.jsoup.Jsoup;
@@ -26,6 +30,8 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.net.URL;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Service
 public class SoftServiceImpl extends BaseServiceImpl<Soft, Long> implements SoftService {
@@ -266,6 +272,8 @@ public class SoftServiceImpl extends BaseServiceImpl<Soft, Long> implements Soft
         }
     }
 
+
+
     private void initSoftImage(Soft soft, SoftPOJO softPOJO) {
         softImageService.remove(soft);
         String urls = softPOJO.getUrls();
@@ -334,5 +342,92 @@ public class SoftServiceImpl extends BaseServiceImpl<Soft, Long> implements Soft
         jdbcTemplate.update("delete from review where soft_id=?;", soft.getId());
         jdbcTemplate.update("delete from softiconlog where soft_id=?;", soft.getId());
         super.delete(soft);
+    }
+
+
+    private String getBaseQuerySql(Long categoryId,String queryAttributes,String where,String orderBy,Pageable pageable){
+        String sql = "select id,logo,fullName";
+        if(StringUtils.isNotBlank(queryAttributes)){
+            sql = sql+","+queryAttributes;
+        }
+        if(categoryId!=null){
+            sql = sql+ " from soft,soft_categories where soft.id=soft_categories.softs_id and categories_id="+categoryId;
+        }else {
+            sql = sql+ " from soft where 1=1";
+        }
+        if(StringUtils.isNotBlank(where)){
+            sql = sql+" and "+where;
+        }
+        if(StringUtils.isNotBlank(orderBy)){
+            sql = sql+ " order by "+orderBy;
+        }
+        if(pageable!=null){
+            sql = sql+ " limit "+(pageable.getPageNumber()-1)*pageable.getPageSize()+","+pageable.getPageSize();
+        }
+        return sql;
+    }
+
+    @Override
+    public List<Map<String, Object>> list(Pageable pageable, Long categoryId) {
+        String baseQuerySql = getBaseQuerySql(categoryId, null, null, null, pageable);
+        String cacheKey = DigestUtils.md5Hex(baseQuerySql);
+        List<Map<String, Object>> maps;
+        try {
+            maps = JsonUtils.toObject(redisService.get(cacheKey), new TypeReference<List<Map<String, Object>>>() {
+            });
+        }catch (Exception e){
+            maps = jdbcTemplate.queryForList(baseQuerySql);
+            redisService.set(cacheKey,JsonUtils.toJson(maps),10, TimeUnit.MINUTES);
+        }
+        return maps;
+    }
+
+    @Override
+    public Map<String, Object> detail(Long id) {
+        String cacheKey = "soft:detail_" + id;
+        Map<String,Object> data = new HashMap<>();
+        String s = redisService.get(cacheKey);
+        try {
+            data = JsonUtils.toObject(s, new TypeReference<Map<String, Object>>() {
+            });
+        }catch (Exception e){
+
+        }
+        if(!data.isEmpty()){
+            return data;
+        }
+        Soft soft = super.find(id);
+        if(soft.getMember()!=null){
+            data.put("author",soft.getMember().getUsername());
+            data.put("avatar",soft.getMember().getAvatar());
+        }
+        data.put("versionCode",soft.getVersionCode());
+        data.put("versionName",soft.getVersionName());
+        data.put("id",id);
+        data.put("donationMember",soft.getDonationMember());
+        data.put("donationIcon",soft.getDonationIcon());
+        data.put("reviewCount",soft.getReviewCount());
+        data.put("fullName",soft.getFullName());
+        data.put("score",String.format("%.2f", soft.getScore()));
+        data.put("name",soft.getName());
+        data.put("logo",soft.getLogo());
+        data.put("size",soft.getSize());
+        data.put("updateDate",soft.getUpdateDate());
+        data.put("introduce",soft.getIntroduce());
+        data.put("memo",soft.getMemo());
+        data.put("updatedContent",soft.getUpdatedContent());
+        if(soft.getSoftImages()!=null){
+            data.put("images",soft.getSoftImages().stream().map(SoftImage::getUrl).collect(Collectors.toList()));
+        }else{
+            data.put("images",Collections.emptyList());
+        }
+        if(soft.getDownloads()>=10000){
+            data.put("downloads",String.format("%.2f",soft.getDownloads()/10000.0)+"万");
+        }else{
+            data.put("downloads",soft.getDownloads()+"次下载");
+        }
+        redisService.set(cacheKey,JsonUtils.toJson(data));
+
+        return data;
     }
 }
