@@ -1,12 +1,15 @@
 package com.bootx.service.impl;
 
 import com.bootx.common.Pageable;
-import com.bootx.dao.*;
-import com.bootx.entity.*;
+import com.bootx.dao.CategoryDao;
+import com.bootx.dao.SoftDao;
+import com.bootx.entity.Category;
+import com.bootx.entity.Member;
+import com.bootx.entity.Soft;
+import com.bootx.entity.SoftImage;
 import com.bootx.pojo.SoftPOJO;
-import com.bootx.service.SoftExtService;
+import com.bootx.service.MemberService;
 import com.bootx.service.SoftImageService;
-import com.bootx.service.SoftInfoService;
 import com.bootx.service.SoftService;
 import com.bootx.util.DateUtils;
 import com.bootx.util.ImageUtils;
@@ -34,11 +37,10 @@ public class SoftServiceImpl extends BaseServiceImpl<Soft, Long> implements Soft
     private CategoryDao categoryDao;
 
     @Resource
-    private SoftInfoService softInfoService;
-    @Resource
-    private SoftExtService softExtService;
-    @Resource
     private SoftImageService softImageService;
+
+    @Resource
+    private MemberService memberService;
 
     @Override
     public Soft findByUrl(String href) {
@@ -63,8 +65,6 @@ public class SoftServiceImpl extends BaseServiceImpl<Soft, Long> implements Soft
         initCategory(soft, softPOJO);
         super.save(soft);
         initSoftImage(soft, softPOJO);
-        initSoftInfo(soft, softPOJO);
-        initSoftExt(soft, softPOJO);
 
     }
 
@@ -224,7 +224,6 @@ public class SoftServiceImpl extends BaseServiceImpl<Soft, Long> implements Soft
                 softPOJO.setMemo(memo);
                 Element first2 = parse.getElementsByClass("txtcont").first();
                 softPOJO.setUpdatedContent(first2.html());
-                initSoftInfo(soft,softPOJO);
 
                 // 图片
                 Element first1 = parse.getElementsByClass("img_item Qimgs").first();
@@ -250,28 +249,21 @@ public class SoftServiceImpl extends BaseServiceImpl<Soft, Long> implements Soft
 
     }
 
-    private void initSoftExt(Soft soft, SoftPOJO softPOJO) {
-        softExtService.remove(soft);
-        SoftExt softExt = new SoftExt();
-        softExt.setAdType(softPOJO.getAdType0());
-        softExt.setPaidType(softPOJO.getAdType1());
-        softExt.setOperationType(softPOJO.getAdType2());
-        softExt.setFeaturesType(softPOJO.getAdType3());
-        softExt.setSoft(soft);
-        soft.setSoftExt(softExt);
-        softExtService.save(softExt);
-    }
-
-    private void initSoftInfo(Soft soft, SoftPOJO softPOJO) {
-        softInfoService.remove(soft);
-        SoftInfo softInfo = new SoftInfo();
-        softInfo.setIntroduce(softPOJO.getIntroduce());
-        softInfo.setMemo(softPOJO.getMemo());
-        softInfo.setUpdatedContent(softPOJO.getUpdatedContent());
-
-
-        softInfo.setSoft(soft);
-        softInfoService.save(softInfo);
+    @Override
+    public void batchSave(Category category, List<Soft> softs) {
+        Member member = memberService.find(1L);
+        for (Soft soft : softs) {
+            soft.setMember(member);
+            Soft current = softDao.find("url", soft.getUrl());
+            if(current==null){
+                Soft.init(soft);
+                soft.getCategories().add(category);
+                super.save(soft);
+            }else{
+                current.getCategories().add(category);
+                super.update(current);
+            }
+        }
     }
 
     private void initSoftImage(Soft soft, SoftPOJO softPOJO) {

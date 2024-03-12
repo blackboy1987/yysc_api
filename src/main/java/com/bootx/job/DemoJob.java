@@ -1,7 +1,6 @@
 package com.bootx.job;
 
 import com.bootx.entity.Soft;
-import com.bootx.entity.SoftExt;
 import com.bootx.service.*;
 import jakarta.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
@@ -9,11 +8,8 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.scheduling.annotation.Scheduled;
 
-import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,10 +22,6 @@ public class DemoJob {
 
     @Resource
     private SoftService softService;
-    @Resource
-    private SoftInfoService softInfoService;
-    @Resource
-    private SoftExtService softExtService;
     @Resource
     private SoftImageService softImageService;
 
@@ -53,8 +45,6 @@ public class DemoJob {
         Document finalParse = parse;
         // 基本信息
         Elements info_cent = finalParse.getElementsByClass("info_cent");
-        SoftExt softExt = new SoftExt();
-        softExt.setSoft(soft);
         if (!info_cent.isEmpty()) {
             Element first = info_cent.first();
             Elements span = first.getElementsByTag("span");
@@ -70,16 +60,16 @@ public class DemoJob {
                     soft.setUpdateDate(text.trim());
                 } else if (StringUtils.equals("资费：", element.trim())) {
                     if (StringUtils.contains("免费", text)) {
-                        softExt.setPaidType(0);
+                        soft.setPaidType(0);
                     } else {
-                        softExt.setPaidType(1);
+                        soft.setPaidType(1);
                     }
 
                 } else if (StringUtils.equals("广告：", element.trim())) {
                     if (StringUtils.contains("没有", text)) {
-                        softExt.setAdType(0);
+                        soft.setAdType(0);
                     } else {
-                        softExt.setAdType(1);
+                        soft.setAdType(1);
                     }
                 }
             }
@@ -98,8 +88,6 @@ public class DemoJob {
         // 评论
         Elements lef1 = finalParse.getElementsByClass("Lef1_cent");
         String html = lef1.html();
-        softInfoService.create(soft, html);
-
         // 图片
         Elements snapShotCont = finalParse.getElementsByClass("snapShotCont");
         List<String> images = new ArrayList<>();
@@ -115,6 +103,5 @@ public class DemoJob {
         soft.setDownloadUrl(href);
         softImageService.create(soft, images);
         softService.update(soft);
-        softExtService.create(softExt);
     }
 }

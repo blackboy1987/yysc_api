@@ -11,10 +11,10 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @SpringBootApplication
 @EnableCaching
 @EnableScheduling
-public class YingyongshichangApplication {
+public class YYSCApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(YingyongshichangApplication.class, args);
+        SpringApplication.run(YYSCApplication.class, args);
     }
 
 }

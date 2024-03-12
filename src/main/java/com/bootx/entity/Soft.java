@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Date;
 import java.util.HashSet;
@@ -53,15 +54,6 @@ public class Soft extends BaseEntity<Long> {
      */
     @JsonView({PageView.class})
     private String password;
-
-
-
-
-    @OneToOne(mappedBy = "soft", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-    private SoftInfo softInfo;
-
-    @OneToOne(mappedBy = "soft", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-    private SoftExt softExt;
 
     @OneToMany(mappedBy = "soft",fetch = FetchType.LAZY)
     private Set<SoftImage> softImages = new HashSet<>();
@@ -211,6 +203,54 @@ public class Soft extends BaseEntity<Long> {
 
     @ManyToMany(fetch = FetchType.LAZY)
     private Set<SoftTag> softTags = new HashSet<>();
+
+    /**
+     * 0: 完全免费
+     * 1：会员制
+     * 2：没钱不给用
+     */
+    private Integer paidType;
+
+    /**
+     * 0: 无广告
+     * 1：少量广告
+     * 2：超过广告
+     */
+    private Integer adType;
+
+    /**
+     * 0: 企业开发
+     * 1：独立开发
+     */
+    private Integer operationType;
+
+    /**
+     * 0:白嫖
+     * 1：Material Design
+     * 2：神作
+     */
+    private Integer featuresType;
+
+    /**
+     * 投稿说明
+     */
+    @JsonView({PageView.class})
+    @Column(columnDefinition = "longtext")
+    private String memo;
+
+    /**
+     * 应用介绍
+     */
+    @JsonView({PageView.class})
+    @Column(columnDefinition = "longtext")
+    private String introduce;
+
+    /**
+     * 更新内容
+     */
+    @JsonView({PageView.class})
+    @Column(columnDefinition = "longtext")
+    private String updatedContent;
 
 
 
@@ -391,28 +431,12 @@ public class Soft extends BaseEntity<Long> {
         this.channel = channel;
     }
 
-    public SoftInfo getSoftInfo() {
-        return softInfo;
-    }
-
-    public void setSoftInfo(SoftInfo softInfo) {
-        this.softInfo = softInfo;
-    }
-
     public Set<SoftImage> getSoftImages() {
         return softImages;
     }
 
     public void setSoftImages(Set<SoftImage> softImages) {
         this.softImages = softImages;
-    }
-
-    public SoftExt getSoftExt() {
-        return softExt;
-    }
-
-    public void setSoftExt(SoftExt softExt) {
-        this.softExt = softExt;
     }
 
     public String getVersionName() {
@@ -543,6 +567,71 @@ public class Soft extends BaseEntity<Long> {
         this.softTags = softTags;
     }
 
+    public Integer getPaidType() {
+        return paidType;
+    }
+
+    public void setPaidType(Integer paidType) {
+        this.paidType = paidType;
+    }
+
+    public Integer getAdType() {
+        return adType;
+    }
+
+    public void setAdType(Integer adType) {
+        this.adType = adType;
+    }
+
+    public Integer getOperationType() {
+        return operationType;
+    }
+
+    public void setOperationType(Integer operationType) {
+        this.operationType = operationType;
+    }
+
+    public Integer getFeaturesType() {
+        return featuresType;
+    }
+
+    public void setFeaturesType(Integer featuresType) {
+        this.featuresType = featuresType;
+    }
+
+    public String getMemo() {
+        if(StringUtils.isBlank(memo)){
+            return "";
+        }
+        return memo;
+    }
+
+    public void setMemo(String memo) {
+        this.memo = memo;
+    }
+
+    public String getIntroduce() {
+        if(StringUtils.isBlank(introduce)){
+            return "";
+        }
+        return introduce;
+    }
+
+    public void setIntroduce(String introduce) {
+        this.introduce = introduce;
+    }
+
+    public String getUpdatedContent() {
+        if(StringUtils.isBlank(updatedContent)){
+            return "";
+        }
+        return updatedContent;
+    }
+
+    public void setUpdatedContent(String updatedContent) {
+        this.updatedContent = updatedContent;
+    }
+
     public interface DownloadView extends DefaultView{}
     
     
@@ -568,5 +657,29 @@ public class Soft extends BaseEntity<Long> {
         this.setTodayDonationMember(0L);
         this.setTodayReviewCount(0L);
         this.setScore(new Random().nextDouble(10));
+    }
+
+    public static void init(Soft soft){
+        Random random = new Random();
+        soft.setDownloads(random.nextLong(1000000));
+        soft.setTodayDownloads(random.nextLong(1000000));
+        soft.setWeekDownloads(random.nextLong(1000000));
+        soft.setMonthDownloads(random.nextLong(1000000));
+        soft.setTodayDownloadsDate(new Date());
+        soft.setWeekDownloadsDate(new Date());
+        soft.setMonthDownloadsDate(new Date());
+        soft.setDonationIcon(0L);
+        soft.setDonationMember(0);
+        soft.setMonthDonationIcon(0L);
+        soft.setMonthDonationMember(0L);
+        soft.setWeekDonationIcon(0L);
+        soft.setWeekDonationMember(0L);
+        soft.setMonthReviewCount(0L);
+        soft.setWeekReviewCount(0L);
+        soft.setStatus(0);
+        soft.setTodayDonationIcon(0L);
+        soft.setTodayDonationMember(0L);
+        soft.setTodayReviewCount(0L);
+        soft.setScore(new Random().nextDouble(10));
     }
 }
