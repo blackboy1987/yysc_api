@@ -108,13 +108,14 @@ public class SoftController extends BaseController {
 			soft.setVersionName("未知");
 		}
 		softService.updateDownloads(id,1);
-
 		return Result.success(soft);
 	}
 
 	@PostMapping("/list")
 	public Result list(Pageable pageable,Long categoryId) {
-		return Result.success(softService.list(pageable,categoryId));
+		String where = "status=2";
+		String orderBy="updateDate desc";
+		return Result.success(softService.list(pageable,categoryId,where,orderBy));
 	}
 
 	@PostMapping("/detail")

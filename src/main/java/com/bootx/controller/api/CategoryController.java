@@ -1,6 +1,7 @@
 
 package com.bootx.controller.api;
 
+import com.bootx.common.CacheKey;
 import com.bootx.common.Result;
 import com.bootx.controller.admin.BaseController;
 import com.bootx.entity.BaseEntity;
@@ -34,14 +35,14 @@ public class CategoryController extends BaseController {
 	public Result list() {
 		List<Map<String, Object>> list = new ArrayList<>();
 		try {
-			list = JsonUtils.toObject(redisService.get("api:categoryList"), new TypeReference<List<Map<String, Object>>>() {
+			list = JsonUtils.toObject(redisService.get(CacheKey.API_CATEGORY_LIST), new TypeReference<List<Map<String, Object>>>() {
 			});
 		}catch (Exception e){
 			e.printStackTrace();
 		}
 		if(list.isEmpty()){
 			list = jdbcTemplate.queryForList("select id,name from Category where parent_id is not null");
-			redisService.set("api:categoryList", JsonUtils.toJson(list));
+			redisService.set(CacheKey.API_CATEGORY_LIST, JsonUtils.toJson(list));
 		}
 		return Result.success(list);
 	}

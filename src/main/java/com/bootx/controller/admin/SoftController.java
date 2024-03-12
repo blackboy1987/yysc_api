@@ -46,12 +46,36 @@ public class SoftController extends BaseController{
     }
 
     /**
+     * 审核通过
+     */
+    @Audit(action = "审核通过")
+    @PostMapping("/pass")
+    public Result pass(Long ids) {
+        Soft soft = softService.find(ids);
+        soft.setStatus(1);
+        softService.update(soft);
+        return Result.success();
+    }
+
+    /**
+     * 审核拒绝
+     */
+    @Audit(action = "审核拒绝")
+    @PostMapping("/reject")
+    public Result reject(Long ids) {
+        Soft soft = softService.find(ids);
+        soft.setStatus(2);
+        softService.update(soft);
+        return Result.success();
+    }
+
+    /**
      * 列表
      */
     @PostMapping("/list")
     @Audit(action = "软件查询")
     @JsonView(BaseEntity.PageView.class)
-    public Result list(Long categoryId, String name, Pageable pageable) {
+    public Result list(Long categoryId, String name, Pageable pageable,Integer status) {
         StringBuilder querySql = new StringBuilder();
         StringBuilder countSql = new StringBuilder();
         querySql.append("select soft.id,soft.name,soft.createdDate,soft.logo,soft.status,member.username username from soft,soft_categories,member where soft.member_id=member.id and soft_categories.softs_id=soft.id");
@@ -59,6 +83,10 @@ public class SoftController extends BaseController{
         if(StringUtils.isNotBlank(name)){
             querySql.append(" and soft.name like '%").append(name).append("%'");
             countSql.append(" and soft.name like '%").append(name).append("%'");
+        }
+        if(status!=null){
+            querySql.append(" and soft.status=").append(status);
+            countSql.append(" and soft.status=").append(status);
         }
         if(categoryId!=null){
             querySql.append(" and soft_categories.categories_id=").append(categoryId);

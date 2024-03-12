@@ -1,13 +1,10 @@
 package com.bootx.controller.admin;
 
 import com.bootx.audit.Audit;
-import com.bootx.common.Pageable;
+import com.bootx.common.CacheKey;
 import com.bootx.common.Result;
-import com.bootx.entity.Admin;
 import com.bootx.entity.BaseEntity;
-import com.bootx.entity.Carousel;
 import com.bootx.entity.Category;
-import com.bootx.service.CarouselService;
 import com.bootx.service.CategoryService;
 import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.annotation.Resource;
@@ -32,6 +29,7 @@ public class CategoryController extends BaseController{
     @PostMapping("/save")
     public Result save(Category category) {
         categoryService.save(category);
+        redisService.delete(CacheKey.API_CATEGORY_LIST);
         return Result.success();
     }
 
@@ -44,6 +42,7 @@ public class CategoryController extends BaseController{
         parent.setName(category.getName());
         parent.setOrder(category.getOrder());
         categoryService.update(parent);
+        redisService.delete(CacheKey.API_CATEGORY_LIST);
         return Result.success();
     }
 

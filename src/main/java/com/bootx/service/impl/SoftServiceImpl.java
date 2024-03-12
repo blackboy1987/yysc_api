@@ -368,8 +368,8 @@ public class SoftServiceImpl extends BaseServiceImpl<Soft, Long> implements Soft
     }
 
     @Override
-    public List<Map<String, Object>> list(Pageable pageable, Long categoryId) {
-        String baseQuerySql = getBaseQuerySql(categoryId, null, null, null, pageable);
+    public List<Map<String, Object>> list(Pageable pageable, Long categoryId,String where, String orderBy) {
+        String baseQuerySql = getBaseQuerySql(categoryId, null, where, orderBy, pageable);
         String cacheKey = DigestUtils.md5Hex(baseQuerySql);
         List<Map<String, Object>> maps;
         try {

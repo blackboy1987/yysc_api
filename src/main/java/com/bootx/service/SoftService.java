@@ -32,7 +32,7 @@ public interface SoftService extends BaseService<Soft, Long> {
 
     void batchSave(Category category, List<Soft> soft);
 
-    List<Map<String, Object>> list(Pageable pageable, Long categoryId);
+    List<Map<String, Object>> list(Pageable pageable, Long categoryId,String where, String orderBy);
 
     Map<String,Object> detail(Long id);
 }
