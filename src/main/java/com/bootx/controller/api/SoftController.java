@@ -98,16 +98,9 @@ public class SoftController extends BaseController {
 		data.put("logo",soft.getLogo());
 		data.put("size",soft.getSize());
 		data.put("updateDate",soft.getUpdateDate());
-
-		if(soft.getSoftInfo()!=null){
-			data.put("introduce",soft.getSoftInfo().getIntroduce());
-			data.put("memo",soft.getSoftInfo().getMemo());
-			data.put("updatedContent",soft.getSoftInfo().getUpdatedContent());
-		}else {
-			data.put("introduce","");
-			data.put("memo","");
-			data.put("updatedContent","");
-		}
+		data.put("introduce",soft.getIntroduce());
+		data.put("memo",soft.getMemo());
+		data.put("updatedContent",soft.getUpdatedContent());
 		if(soft.getSoftImages()!=null){
 			data.put("images",soft.getSoftImages().stream().map(SoftImage::getUrl).collect(Collectors.toList()));
 		}else{

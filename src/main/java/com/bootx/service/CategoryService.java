@@ -8,4 +8,5 @@ import com.bootx.entity.Category;
  */
 public interface CategoryService extends BaseService<Category, Long> {
 
+    Category create(Category root);
 }

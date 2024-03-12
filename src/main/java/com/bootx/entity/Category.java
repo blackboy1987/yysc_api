@@ -14,7 +14,7 @@ public class Category extends OrderedEntity<Long> {
     @JsonView({PageView.class})
     private String name;
 
-    @Column(unique = true,updatable = true,nullable = false)
+    @Column(unique = true,nullable = false)
     private String url;
 
     @ManyToOne(fetch = FetchType.LAZY)

@@ -29,4 +29,6 @@ public interface SoftService extends BaseService<Soft, Long> {
 
     void load(Soft soft);
     void load(Category category);
+
+    void batchSave(Category category, List<Soft> soft);
 }

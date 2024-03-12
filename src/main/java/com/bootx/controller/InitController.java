@@ -40,10 +40,6 @@ public class InitController {
     @Resource
     private ReviewService reviewService;
     @Resource
-    private SoftInfoService softInfoService;
-    @Resource
-    private SoftExtService softExtService;
-    @Resource
     private SoftImageService softImageService;
 
     @Resource
@@ -51,42 +47,11 @@ public class InitController {
 
     private static final ExecutorService executorService = Executors.newFixedThreadPool(10);
 
-    @GetMapping
-    public Result index() throws IOException {
-        List<Category> categories = new ArrayList<>();
-        String url = "https://m.shouji.com.cn/soft_category.html";
-        Document parse = Jsoup.parse(new URL(url).openStream(), "gbk", url);
-        Elements subExtImgList = parse.getElementsByClass("sub_extImgList");
-        subExtImgList.forEach(item -> {
-            Elements a = item.getElementsByTag("a");
-            Category parent = new Category();
-            for (int i = 0; i < a.size(); i++) {
-                if (i == 0) {
-                    parent.setName(a.get(i).text());
-                    parent.setUrl(a.get(i).attr("href"));
-                } else {
-                    Category child = new Category();
-                    child.setName(a.get(i).text());
-                    child.setUrl(a.get(i).attr("href"));
-                    child.setParent(parent);
-                    parent.getChildren().add(child);
-                }
-            }
-            categories.add(parent);
-        });
-        // 持久化
-        categories.forEach(root -> {
-            Category save = categoryService.save(root);
-            root.getChildren().forEach(child -> {
-                child.setParent(save);
-                categoryService.save(child);
-            });
-        });
-
-        return Result.success();
-    }
-
-
+    /**
+     * 拉去软件
+     * @return
+     * @throws IOException
+     */
     @GetMapping("/soft")
     public Result soft() throws IOException {
         Member member = memberService.find(1L);
@@ -205,8 +170,6 @@ public class InitController {
             executorService.execute(() -> {
                 // 基本信息
                 Elements info_cent = finalParse.getElementsByClass("info_cent");
-                SoftExt softExt = new SoftExt();
-                softExt.setSoft(soft);
                 if (!info_cent.isEmpty()) {
                     Element first = info_cent.first();
                     Elements span = first.getElementsByTag("span");
@@ -222,16 +185,16 @@ public class InitController {
                             soft.setUpdateDate(text.trim());
                         } else if (StringUtils.equals("资费：", element.trim())) {
                             if (StringUtils.contains("免费", text)) {
-                                softExt.setPaidType(0);
+                                soft.setPaidType(0);
                             } else {
-                                softExt.setPaidType(1);
+                                soft.setPaidType(1);
                             }
 
                         } else if (StringUtils.equals("广告：", element.trim())) {
                             if (StringUtils.contains("没有", text)) {
-                                softExt.setAdType(0);
+                                soft.setAdType(0);
                             } else {
-                                softExt.setAdType(1);
+                                soft.setAdType(1);
                             }
                         }
                     }
@@ -250,8 +213,6 @@ public class InitController {
                 // 评论
                 Elements lef1 = finalParse.getElementsByClass("Lef1_cent");
                 String html = lef1.html();
-                softInfoService.create(soft, html);
-
                 // 图片
                 Elements snapShotCont = finalParse.getElementsByClass("snapShotCont");
                 List<String> images = new ArrayList<>();
@@ -263,7 +224,6 @@ public class InitController {
                 }
                 softImageService.create(soft, images);
                 softService.update(soft);
-                softExtService.create(softExt);
             });
         }
 
